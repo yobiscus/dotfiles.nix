@@ -1,4 +1,8 @@
 #!/bin/bash
+#
+# Initalize Nix toolchain and dotfiles.
+# Currently only Debian-based distros are supported.
+#
 
 # Update pre-installed packages
 sudo apt update
@@ -29,3 +33,18 @@ fi
 #
 # May need to log out and back in at this point
 #
+
+hyprland_desktop=/usr/share/wayland-sessions/hyprland.desktop
+if [[ ! -e $hyprland_desktop ]]; then
+    # Finish configuring Hyprland
+    nix-channel \
+        --add https://github.com/nix-community/nixGL/archive/main.tar.gz \
+        nixgl
+    nix-channel --update
+    nix-env -iA nixgl.auto.nixGLDefault
+fi
+sudo tee /usr/share/wayland-sessions/hyprland.desktop >/dev/null <<EOF
+[Desktop Entry]
+Exec=nixGL Hyprland
+Name=Hyprland
+EOF

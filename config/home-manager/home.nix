@@ -11,6 +11,7 @@
   imports = [
     ./modules/fonts.nix
     ./modules/git.nix
+    ./modules/hyprland.nix
     ./modules/neovim.nix
     ./modules/terminal.nix
   ];
