@@ -22,7 +22,7 @@ if [[ ! -e $HOME/.nix-profile/bin/home-manager ]]; then
     nix-channel --update
     nix-shell '<home-manager>' -A install
     mv $HOME/.config/home-manager{,.bak}
-    ln -sf $HOME/.dotfiles/ubuntu/config/home-manager $HOME/.config/home-manager
+    ln -sf $HOME/.dotfiles/config/home-manager $HOME/.config/home-manager
     home-manager switch
 fi
 
