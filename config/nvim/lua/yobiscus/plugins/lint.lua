@@ -4,8 +4,8 @@ return {
 	config = function()
 		local lint = require("lint")
 		lint.linters_by_ft = {
-			markdown = { "vale" },
-			rst = { "vale" },
+			-- markdown = { "vale" },
+			-- rst = { "vale" },
 			yaml = { "yamllint" },
 			-- python = { "pylint", "mypy" },
 		}
