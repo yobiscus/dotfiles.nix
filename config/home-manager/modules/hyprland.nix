@@ -1,6 +1,10 @@
 { config, pkgs, ... }:
 
 {
+  home.packages = [
+    pkgs.wofi
+  ];
+
   # Hyprland
   wayland.windowManager.hyprland = {
     enable = true;
