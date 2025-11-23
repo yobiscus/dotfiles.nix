@@ -25,5 +25,10 @@
     oh-my-zsh = {
       enable = true;
     };
+    shellAliases = {
+      hm = "home-manager";
+      hmb = "home-manager build";
+      hms = "home-manager switch";
+    };
   };
 }
