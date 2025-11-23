@@ -1,6 +1,11 @@
 { config, pkgs, ... }:
 
 {
+  home.packages = [
+    pkgs.fd
+    pkgs.ripgrep
+  ];
+
   programs.kitty = {
     enable = true;
     settings = {
