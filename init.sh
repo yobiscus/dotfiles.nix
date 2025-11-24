@@ -34,9 +34,9 @@ fi
 # May need to log out and back in at this point
 #
 
+# Finish configuring Hyprland
 hyprland_desktop=/usr/share/wayland-sessions/hyprland.desktop
 if [[ ! -e $hyprland_desktop ]]; then
-    # Finish configuring Hyprland
     nix-channel \
         --add https://github.com/nix-community/nixGL/archive/main.tar.gz \
         nixgl
