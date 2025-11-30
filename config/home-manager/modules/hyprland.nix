@@ -72,6 +72,10 @@
     };
   };
 
+  programs.waybar = {
+    enable = true;
+  };
+
   services.hypridle = {
       enable = true;
       settings = {
