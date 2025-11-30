@@ -3,6 +3,8 @@ return {
 	dependencies = { "echasnovski/mini.icons" },
 	config = function()
 		local fzf_lua = require("fzf-lua")
+
+		-- general
 		vim.keymap.set("n", "<leader>ff", fzf_lua.files, { desc = "files" })
 		vim.keymap.set("n", "<leader>fi", fzf_lua.git_files, { desc = "git files" })
 		vim.keymap.set("n", "<leader>fg", fzf_lua.live_grep, { desc = "grep" })
@@ -10,6 +12,15 @@ return {
 		vim.keymap.set("n", "<leader>fb", fzf_lua.buffers, { desc = "buffers" })
 		vim.keymap.set("n", "<leader>fh", fzf_lua.helptags, { desc = "help tags" })
 		vim.keymap.set("n", "<leader>fl", fzf_lua.lsp_finder, { desc = "lsp" })
+
+		-- dotfiles
+		vim.keymap.set("n", "<leader>fof", function()
+			fzf_lua.files({ cwd = "~/.dotfiles" })
+		end, { desc = "dotfiles" })
+		vim.keymap.set("n", "<leader>fog", function()
+			fzf_lua.live_grep({ cwd = "~/.dotfiles" })
+		end, { desc = "dotfiles" })
+
 		fzf_lua.setup({})
 	end,
 }

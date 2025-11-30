@@ -15,10 +15,10 @@ return {
 			wk.add({
 				{ "<leader>e", group = "extension" },
 				{ "<leader>f", group = "find" },
+				{ "<leader>fo", group = "dotfiles" },
 				{ "<leader>g", group = "git" },
 				{ "<leader>l", group = "lsp" },
 				{ "<leader>o", group = "open" },
-				{ "<leader>oa", group = "AI" },
 				{ "<leader>x", group = "trouble" },
 			})
 		end,
