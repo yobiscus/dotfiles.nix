@@ -25,7 +25,7 @@ fi
 if [[ ! -e $HOME/.nix-profile/bin/home-manager ]]; then
     [[ -d $HOME/.config/home-manager ]] && mv $HOME/.config/home-manager{,.bak}
     ln -sf $HOME/.dotfiles/config/home-manager $HOME/.config/home-manager
-    nix run home-manager/master -- init --switch $HOME/.config/home-manager
+    nix run home-manager/release-25.11 -- init --switch $HOME/.config/home-manager
     home-manager switch --flake $HOME/.config/home-manager
 fi
 
