@@ -31,4 +31,9 @@
       hms = "home-manager switch && $HOME/.dotfiles/scripts/home-manager-diff-last";
     };
   };
+
+  services.ssh-agent = {
+    enable = true;
+    enableZshIntegration = true;
+  };
 }
