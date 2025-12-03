@@ -12,6 +12,9 @@ sudo apt dist-upgrade
 if [[ ! -d /nix ]]; then
     sudo apt install curl
     sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --daemon
+    echo experimental-features = nix-command flakes \
+        | sudo tee -a /etc/nix/nix.conf
+    sudo systemctl restart nix-daemon.service
 fi
 
 #
@@ -20,14 +23,10 @@ fi
 
 # Install Nix Home Manager
 if [[ ! -e $HOME/.nix-profile/bin/home-manager ]]; then
-    nix-channel \
-        --add https://github.com/nix-community/home-manager/archive/master.tar.gz \
-        home-manager
-    nix-channel --update
-    nix-shell '<home-manager>' -A install
-    mv $HOME/.config/home-manager{,.bak}
+    [[ -d $HOME/.config/home-manager ]] && mv $HOME/.config/home-manager{,.bak}
     ln -sf $HOME/.dotfiles/config/home-manager $HOME/.config/home-manager
-    home-manager switch
+    nix run home-manager/master -- init --switch $HOME/.config/home-manager
+    home-manager switch --flake $HOME/.config/home-manager
 fi
 
 #
