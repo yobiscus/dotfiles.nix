@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -e
+
+# show home-manager package diff from last two generations
+generations=($(home-manager generations | head -n2 | tac | awk '{ print $7 }'))
+echo "Diff: ${generations[0]}..${generations[1]}"
+nix store diff-closures "${generations[@]}"
