@@ -28,7 +28,7 @@
     shellAliases = {
       hm = "home-manager";
       hmb = "home-manager build";
-      hms = "home-manager switch";
+      hms = "home-manager switch && $HOME/.dotfiles/scripts/home-manager-diff-last";
     };
   };
 }
