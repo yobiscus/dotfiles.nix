@@ -5,6 +5,13 @@
     pkgs.wofi
   ];
 
+  home.pointerCursor = {
+    gtk.enable = true;
+    package = pkgs.bibata-cursors;
+    name = "Bibata-Modern-Ice";
+    size = 22;
+  };
+
   wayland.windowManager.hyprland = {
     enable = true;
     extraConfig = ''
