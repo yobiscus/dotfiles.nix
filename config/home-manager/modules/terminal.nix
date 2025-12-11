@@ -6,6 +6,11 @@
     pkgs.ripgrep
   ];
 
+  programs.direnv = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+
   programs.kitty = {
     enable = true;
     settings = {
