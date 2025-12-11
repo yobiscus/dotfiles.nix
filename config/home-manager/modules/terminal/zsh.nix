@@ -24,8 +24,9 @@
       hm = "home-manager";
       hms = "$HOME/.dotfiles/scripts/home-manager-switch";
     };
-    initContent = lib.mkOrder 1500 ''
-      fastfetch
-    '';
+    initContent = let
+      zshConfigEarlyInit = lib.mkOrder 500 "export SHELL=${pkgs.zsh}/bin/zsh";
+      zshConfigLast = lib.mkOrder 1500 "fastfetch";
+    in lib.mkMerge [ zshConfigEarlyInit zshConfigLast ];
   };
 }
