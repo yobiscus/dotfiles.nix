@@ -1,3 +1,6 @@
 [submodule "config/home-manager/modules/personal"]
 	path = config/home-manager/modules/personal
 	url = git@github.com:yobiscus/dotfiles.nix-personal
+[submodule "config/home-manager/modules/wm"]
+	path = config/home-manager/modules/wm
+	url = git@github.com:yobiscus/dotfiles.nix-wm
