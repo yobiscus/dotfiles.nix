@@ -47,3 +47,6 @@ sudo tee /usr/share/wayland-sessions/hyprland.desktop >/dev/null <<EOF
 Exec=nixGL Hyprland
 Name=Hyprland
 EOF
+
+# Remove unnecesary packages (TODO)
+sudo apt purge curl firefox

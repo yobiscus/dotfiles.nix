@@ -2,6 +2,7 @@
 
 {
   home.packages = [
+    pkgs.firefox
     pkgs.wofi
   ];
 
