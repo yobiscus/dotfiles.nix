@@ -2,8 +2,6 @@
 
 ## Missing tools
 
-- [ ] tmux
-
 ## Tools to configure
 
 - [ ] zsh
@@ -18,5 +16,3 @@
 - [ ] lots...
 
 ## Misc.
-
-- [ ] New git repo
