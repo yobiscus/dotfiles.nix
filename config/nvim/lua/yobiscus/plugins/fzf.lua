@@ -16,10 +16,10 @@ return {
 		-- dotfiles
 		vim.keymap.set("n", "<leader>fof", function()
 			fzf_lua.files({ cwd = "~/.dotfiles" })
-		end, { desc = "dotfiles" })
+		end, { desc = "find dotfiles" })
 		vim.keymap.set("n", "<leader>fog", function()
 			fzf_lua.live_grep({ cwd = "~/.dotfiles" })
-		end, { desc = "dotfiles" })
+		end, { desc = "grep dotfiles" })
 
 		fzf_lua.setup({})
 	end,
