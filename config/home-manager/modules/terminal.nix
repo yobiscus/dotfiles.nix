@@ -1,8 +1,9 @@
-{ config, pkgs, ... }:
+{ config, pkgs, lib, ... }:
 
 {
   home.packages = [
     pkgs.fd
+    pkgs.fastfetch
     pkgs.ripgrep
   ];
 
@@ -24,17 +25,22 @@
 
   programs.zsh = {
     enable = true;
-    # enableCompletions = true;
-    # autosuggestion.enable = true;
-    # syntaxHighlighting.enable = true;
+    enableCompletion = true;
+    autosuggestion.enable = true;
+    syntaxHighlighting.enable = true;
+    history = {
+      saveNoDups = true;
+    };
     oh-my-zsh = {
       enable = true;
     };
     shellAliases = {
       hm = "home-manager";
-      hmb = "home-manager build";
-      hms = "home-manager switch && $HOME/.dotfiles/scripts/home-manager-diff-last";
+      hms = "$HOME/.dotfiles/scripts/home-manager-switch";
     };
+    initContent = lib.mkOrder 1500 ''
+      fastfetch
+    '';
   };
 
   services.ssh-agent = {
