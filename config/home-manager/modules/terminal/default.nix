@@ -1,0 +1,29 @@
+{ config, pkgs, lib, ... }:
+
+{
+  imports = [
+    ./zsh.nix
+  ];
+
+  home.packages = [
+    pkgs.fd
+    pkgs.ripgrep
+  ];
+
+  programs.direnv = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+
+  programs.kitty = {
+    enable = true;
+    settings = {
+      shell = "${pkgs.zsh}/bin/zsh";
+    };
+  };
+
+  services.ssh-agent = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+}

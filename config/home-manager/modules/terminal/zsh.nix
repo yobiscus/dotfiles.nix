@@ -2,22 +2,8 @@
 
 {
   home.packages = [
-    pkgs.fd
     pkgs.fastfetch
-    pkgs.ripgrep
   ];
-
-  programs.direnv = {
-    enable = true;
-    enableZshIntegration = true;
-  };
-
-  programs.kitty = {
-    enable = true;
-    settings = {
-      shell = "${pkgs.zsh}/bin/zsh";
-    };
-  };
 
   programs.starship = {
     enable = true;
@@ -41,10 +27,5 @@
     initContent = lib.mkOrder 1500 ''
       fastfetch
     '';
-  };
-
-  services.ssh-agent = {
-    enable = true;
-    enableZshIntegration = true;
   };
 }
