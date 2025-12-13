@@ -29,4 +29,6 @@
       zshConfigLast = lib.mkOrder 1500 "fastfetch";
     in lib.mkMerge [ zshConfigEarlyInit zshConfigLast ];
   };
+
+  home.file.".config/fastfetch".source = ../../../fastfetch;
 }
