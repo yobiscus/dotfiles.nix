@@ -14,7 +14,7 @@
     ./modules/neovim.nix
     ./modules/terminal
   ]
-  ++ lib.optional (builtins.pathExists ./modules/personal/default.nix) ./modules/personal
-  ++ lib.optional (builtins.pathExists ./modules/wm/default.nix) ./modules/wm
+  ++ lib.optional (builtins.pathExists ./modules/personal/default.nix) ./modules/personal/default.nix
+  ++ lib.optional (builtins.pathExists ./modules/wm/default.nix) ./modules/wm/default.nix
   ;
 }
