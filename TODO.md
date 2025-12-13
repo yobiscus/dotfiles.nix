@@ -5,7 +5,7 @@
 ## Tools to configure
 
 - [ ] zsh
-- [ ] kitty
+- [ ] waybar
 
 ## Dev environments
 
