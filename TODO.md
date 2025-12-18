@@ -5,7 +5,6 @@
 ## Tools to configure
 
 - [ ] zsh
-- [ ] waybar
 
 ## Dev environments
 
@@ -13,6 +12,9 @@
 
 ## Ricing
 
-- [ ] lots...
+- [ ] Match waybar colors with wallpaper
+- [ ] Customize window l&f
+- [ ] Customize wofi l&f
+- [ ] Define window rules
 
 ## Misc.
