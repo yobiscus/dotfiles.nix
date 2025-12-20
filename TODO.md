@@ -12,9 +12,9 @@
 
 ## Ricing
 
-- [ ] Match waybar colors with wallpaper
 - [ ] Customize window l&f
 - [ ] Customize wofi l&f
 - [ ] Define window rules
+- [ ] Automatically update waybar colors when changing wallpaper
 
 ## Misc.
