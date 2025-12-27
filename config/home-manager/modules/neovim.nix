@@ -18,5 +18,8 @@
     VISUAL = "nvim";
   };
 
-  home.file.".config/nvim".source = ../../nvim;
+  # copy as writable for convenience
+  home.file.".config/nvim".source =
+    config.lib.file.mkOutOfStoreSymlink
+    "${config.home.homeDirectory}/.dotfiles/config/nvim";
 }
