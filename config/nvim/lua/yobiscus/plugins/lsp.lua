@@ -11,9 +11,10 @@ return {
 						cargo = {
 							allFeatures = true,
 						},
-						checkOnSave = {
+						check = {
 							command = "clippy",
 						},
+						checkOnSave = true,
 						inlayHints = {
 							parameterHints = { enable = true },
 							typeHints = { enable = true },
