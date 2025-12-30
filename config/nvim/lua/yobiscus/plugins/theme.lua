@@ -19,7 +19,12 @@ return {
 		-- Main entrypoint on matugen reloads
 		local function auxiliary_function()
 			reload("yobiscus.colors-matugen")
+
+			-- other theme customizations
+			local colorscheme = require("base16-colorscheme")
 			update_hl("TSFunction", { italic = true })
+			update_hl("TSVariableBuiltin", { fg = colorscheme.colors.base09 })
+
 			-- reloading base16 overwrites lualine configuration, reset it now
 			require("lualine").setup({
 				options = { theme = "base16" },

@@ -7,15 +7,15 @@ require("base16-colorscheme").setup({
 	base02 = "#9d8f7b",
 	base03 = "#9d8f7b", -- comments
 	base04 = "#d5c4af",
-	base05 = "#ece1d3", -- variables
+	base05 = "#ece1d3", -- parameters
 	base06 = "#362f27",
 	base07 = "#3f382f",
-	base08 = "#a1cdff", -- variables, modules
+	base08 = "#ece1d3", -- variables, modules
 	base09 = "#ffb4ab", -- numbers, enum values
-	base0A = "#ffb4ab", -- classes
+	base0A = "#a1cdff", -- classes
 	base0B = "#a1cdff", -- text
 	base0C = "#69b3fc",
 	base0D = "#e1a32c", -- functions
-	base0E = "#ffdeac", -- errors, rust keywords
+	base0E = "#e5c18a", -- errors, rust keywords
 	base0F = "#a1cdff",
 })
