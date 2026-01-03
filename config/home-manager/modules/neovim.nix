@@ -4,6 +4,7 @@
   home.packages = [
     pkgs.neovim
     # essentials
+    pkgs.curl
     pkgs.fzf
     pkgs.gcc
     pkgs.nodejs
