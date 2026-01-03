@@ -3,10 +3,15 @@
 {
   home.username = "jogravel";
   home.homeDirectory = "/home/jogravel";
-
   home.stateVersion = "25.05"; # Don't change this, generally.
-
   programs.home-manager.enable = true;
+
+  nixpkgs = {
+    config = {
+      allowUnfree = true;
+      allowUnfreePredicate = (_: true);
+    };
+  };
 
   imports = [
     ./modules/fonts.nix
