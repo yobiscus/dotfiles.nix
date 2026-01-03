@@ -9,12 +9,11 @@
 ## Dev environments
 
 - [ ] cargo, rust-lsp, etc.
+- [ ] wrapper for `nix flake new --template https://flakehub...`
 
 ## Ricing
 
-- [ ] Customize window l&f
 - [ ] Customize wofi l&f
-- [ ] Define window rules
 - [ ] Automatically regenerate matugen colors when changing wallpaper
 
 ## Multi-monitor
@@ -28,3 +27,4 @@
 ## Misc.
 
 - [ ] Start terminal and browser automatically in windows 1 and 2
+- [ ] Avoid waybar SIGUSR2 (prefer kill and restart) ([issue](https://github.com/Alexays/Waybar/issues/3344))
