@@ -14,9 +14,12 @@ return {
 				"<leader>ap",
 				function()
 					vim.ui.input({ prompt = "What do you need?" }, function(input)
-						vim.cmd("CodeCompanion #{buffer} " .. input)
+						if input ~= nil and input ~= "" then
+							vim.cmd("CodeCompanion #{buffer} " .. input)
+						end
 					end)
 				end,
+				mode = { "n", "v" },
 				desc = "AI Prompt",
 			},
 			{ "<leader>ax", "<cmd>CodeCompanionActions<cr>", desc = "AI Actions" },
