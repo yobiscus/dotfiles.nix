@@ -1,7 +1,6 @@
 #!/bin/bash
 #
-# Initalize Nix toolchain and dotfiles.
-# Currently only Debian-based distros are supported.
+# Initalize Nix toolchain and dotfiles for Ubuntu.
 #
 
 # Update pre-installed packages

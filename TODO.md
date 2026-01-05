@@ -1,6 +1,9 @@
 ## QOL improvements
 
-## Missing tools
+## Optional modules
+
+- [ ] Personal and wm modules should be optional. Unitialized submodules are
+      breaks flakes. Need another solution.
 
 ## Tools to configure
 
