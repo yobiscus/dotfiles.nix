@@ -21,5 +21,8 @@ ZSH_AUTOSUGGEST_STRATEGY=(history)
 # Install fzf bindings
 command -v fzf >/dev/null 2>&1 && source <(fzf --zsh)
 
+# Configure oh-my-posh prompt
+command -v oh-my-posh >/dev/null 2>&1 && eval "$(oh-my-posh init zsh --config ~/.config/oh-my-posh/config.json)"
+
 # Load the common config
 source ~/.config/zsh/conf/main.zsh
