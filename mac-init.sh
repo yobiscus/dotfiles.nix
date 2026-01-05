@@ -20,6 +20,7 @@ set -e
 #     home-manager switch --flake $HOME/.config/home-manager
 # fi
 
+# symlink config dirs
 for repoconfig in ~/.dotfiles/config/* ~/.dotfiles/wm/config/*; do
     config=~/.config/$(basename "${repoconfig}")
     if [[ "$config" -ef "$repoconfig" ]]; then
@@ -30,3 +31,6 @@ for repoconfig in ~/.dotfiles/config/* ~/.dotfiles/wm/config/*; do
     fi
     ln -sv "$repoconfig" "$config"
 done
+
+# non-standard symlinks
+ln -s ~/.config/zsh/zshrc ~/.zshrc
