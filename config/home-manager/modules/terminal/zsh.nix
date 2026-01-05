@@ -17,9 +17,6 @@
     history = {
       saveNoDups = true;
     };
-    oh-my-zsh = {
-      enable = true;
-    };
     shellAliases = {
       hm = "home-manager";
       hms = "$HOME/.dotfiles/scripts/home-manager-switch";
