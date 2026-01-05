@@ -5,10 +5,6 @@
     pkgs.fastfetch
   ];
 
-  programs.starship = {
-    enable = true;
-  };
-
   programs.zsh = {
     enable = true;
     autosuggestion.enable = true;
@@ -28,6 +24,21 @@
     in lib.mkMerge [ zshConfigEarlyInit zshConfigLast ];
   };
   home.file.".config/zsh".source = ../../../zsh;
+
+  # integrations
+  programs.direnv.enableZshIntegration = true;
+  programs.fzf.enableZshIntegration = true;
+  services.ssh-agent.enableZshIntegration = true;
+
+  programs.oh-my-posh = {
+    enable = true;
+    enableZshIntegration = true;
+    configFile = "$HOME/.config/oh-my-posh/config.json";
+  };
+  # config.json is modified by Mutagen, so it has to be writable
+  home.file.".config/oh-my-posh/config.json".source =
+    config.lib.file.mkOutOfStoreSymlink
+    "${config.home.homeDirectory}/.dotfiles/config/oh-my-posh/config.json";
 
   home.file.".config/fastfetch".source = ../../../fastfetch;
 }

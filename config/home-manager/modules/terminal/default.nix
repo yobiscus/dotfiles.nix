@@ -14,17 +14,14 @@
 
   programs.direnv = {
     enable = true;
-    enableZshIntegration = true;
     nix-direnv.enable = true;
   };
 
   programs.fzf = {
     enable = true;
-    enableZshIntegration = true;
   };
 
   services.ssh-agent = {
     enable = true;
-    enableZshIntegration = true;
   };
 }
