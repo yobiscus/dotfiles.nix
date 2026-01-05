@@ -25,12 +25,16 @@ for repoconfig in ~/.dotfiles/config/* ~/.dotfiles/wm/config/*; do
     config=~/.config/$(basename "${repoconfig}")
     if [[ "$config" -ef "$repoconfig" ]]; then
         continue
-    fi
-    if [[ -e "$config" ]]; then
+    elif [[ -e "$config" ]]; then
         mv -v "$config"{,.bak}
     fi
     ln -sv "$repoconfig" "$config"
 done
 
 # non-standard symlinks
-ln -s ~/.config/zsh/zshrc ~/.zshrc
+if [[ ~/.zshrc -ef ~/.config/zsh/zshrc ]]; then
+    :  # do nothing
+elif [[ -e ~/.zshrc ]]; then
+    mv ~/.zshrc{,.bak}
+fi
+ln -sf ~/.config/zsh/zshrc ~/.zshrc

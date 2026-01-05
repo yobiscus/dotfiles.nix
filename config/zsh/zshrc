@@ -11,7 +11,7 @@ unset zsh_bin
 #   git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh_plug/zsh-autosuggestions
 zsh_plugs=~/.zsh_plugs
 for plug in zsh-autosuggestions zsh-syntax-highlighting; do
-    [[ -e "$zsh_plugs/$zsh_plug" ]] && source $zsh_plugs/$zsh_plug/$zsh_plug.zsh
+    [[ -e "$zsh_plugs/$plug" ]] && source $zsh_plugs/$plug/$plug.zsh
 done
 unset zsh_plugs
 
