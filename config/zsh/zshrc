@@ -1,0 +1,25 @@
+#
+# Symlink this to ~/.zshrc if no using Nix Home Manager
+#
+
+# Prefer zsh shell in terminal
+zsh_bin=$(which zsh)
+[[ -n "$zsh_bin" ]] && SHELL=$zsh_bin
+unset zsh_bin
+
+# Source manually installed plugins
+#   git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh_plug/zsh-autosuggestions
+zsh_plugs=~/.zsh_plugs
+for plug in zsh-autosuggestions zsh-syntax-highlighting; do
+    [[ -e "$zsh_plugs/$zsh_plug" ]] && source $zsh_plugs/$zsh_plug/$zsh_plug.zsh
+done
+unset zsh_plugs
+
+# Configure autosuggestions: use most recent history match
+ZSH_AUTOSUGGEST_STRATEGY=(history)
+
+# Install fzf bindings
+command -v >/dev/null 2>&1 && source <(fzf --zsh)
+
+# Load the common config
+source ~/.config/zsh/conf/main.zsh
