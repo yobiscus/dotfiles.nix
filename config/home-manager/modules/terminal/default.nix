@@ -9,6 +9,7 @@
   home.packages = [
     pkgs.fd
     pkgs.ripgrep
+    pkgs.tree
   ];
 
   programs.direnv = {
