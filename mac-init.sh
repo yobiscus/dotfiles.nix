@@ -20,7 +20,7 @@ set -e
 #     home-manager switch --flake $HOME/.config/home-manager
 # fi
 
-for repoconfig in ~/.dotfiles/config/*; do
+for repoconfig in ~/.dotfiles/config/* ~/.dotfiles/wm/config/*; do
     config=~/.config/$(basename "${repoconfig}")
     if [[ "$config" -ef "$repoconfig" ]]; then
         continue
