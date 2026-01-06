@@ -4,5 +4,6 @@ return {
 	opts = {
 		-- Better `vim.ui.input`.
 		input = {},
+		picker = {},
 	},
 }

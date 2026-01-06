@@ -10,18 +10,6 @@ return {
 		},
 		keys = {
 			{ "<leader>ac", "<cmd>CodeCompanionChat Toggle<cr>", desc = "AI Chat" },
-			{
-				"<leader>ap",
-				function()
-					vim.ui.input({ prompt = "What do you need?" }, function(input)
-						if input ~= nil and input ~= "" then
-							vim.cmd("CodeCompanion #{buffer} " .. input)
-						end
-					end)
-				end,
-				mode = { "n", "v" },
-				desc = "AI Prompt",
-			},
 			{ "<leader>ax", "<cmd>CodeCompanionActions<cr>", desc = "AI Actions" },
 		},
 		config = function()
@@ -78,6 +66,81 @@ return {
 		config = function()
 			require("mcphub").setup()
 		end,
+	},
+	{
+		"folke/sidekick.nvim",
+		opts = {
+			copilot = { status = { enabled = false } },
+			cli = {
+				win = {
+					layout = "right",
+					split = { width = 70, height = 20 },
+				},
+				mux = {
+					enabled = true,
+					backend = "tmux",
+					create = "split",
+					split = {
+						vertical = true, -- vertical or horizontal split
+						size = 0.3, -- size of the split (0-1 for percentage)
+					},
+				},
+			},
+		},
+		keys = {
+			{
+				"<leader>aa",
+				function()
+					require("sidekick.cli").toggle({ name = "opencode" })
+				end,
+				desc = "Sidekick Toggle CLI",
+			},
+			{
+				"<leader>as",
+				function()
+					require("sidekick.cli").select({ filter = { installed = true } })
+				end,
+				desc = "Select CLI",
+			},
+			{
+				"<leader>ad",
+				function()
+					require("sidekick.cli").close()
+				end,
+				desc = "Detach a CLI Session",
+			},
+			{
+				"<leader>at",
+				function()
+					require("sidekick.cli").send({ msg = "{this}" })
+				end,
+				mode = { "x", "n" },
+				desc = "Send This",
+			},
+			{
+				"<leader>af",
+				function()
+					require("sidekick.cli").send({ msg = "{file}" })
+				end,
+				desc = "Send File",
+			},
+			{
+				"<leader>av",
+				function()
+					require("sidekick.cli").send({ msg = "{selection}" })
+				end,
+				mode = { "x" },
+				desc = "Send Visual Selection",
+			},
+			{
+				"<leader>ap",
+				function()
+					require("sidekick.cli").prompt()
+				end,
+				mode = { "n", "x" },
+				desc = "Sidekick Select Prompt",
+			},
+		},
 	},
 	-- {
 	--   "echasnovski/mini.diff",
