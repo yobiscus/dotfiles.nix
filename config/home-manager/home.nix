@@ -20,6 +20,7 @@
     ./modules/terminal
   ]
   ++ lib.optional (builtins.getEnv "NIX_HM_PERSONAL" == "1") ./modules/personal
+  ++ lib.optional (builtins.getEnv "NIX_HM_WORK" == "1") ./modules/work
   ++ lib.optional (builtins.getEnv "NIX_HM_WM" == "1") ./modules/wm
   ;
 
@@ -28,6 +29,7 @@
     NIX_HM_INITIALIZED = "1";
   }
   // lib.optionalAttrs (builtins.getEnv "NIX_HM_PERSONAL" == "1") { "NIX_HM_PERSONAL" = "1"; }
+  // lib.optionalAttrs (builtins.getEnv "NIX_HM_WORK" == "1") { "NIX_HM_WORK" = "1"; }
   // lib.optionalAttrs (builtins.getEnv "NIX_HM_WM" == "1") { "NIX_HM_WM" = "1"; }
   ;
 }

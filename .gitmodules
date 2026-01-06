@@ -4,3 +4,6 @@
 [submodule "wm"]
 	path = wm
 	url = git@github.com:yobiscus/dotfiles.nix-wm
+[submodule "work"]
+	path = work
+	url = git@github.com:yobiscus/dotfiles.nix-work
