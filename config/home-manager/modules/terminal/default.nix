@@ -20,8 +20,4 @@
   programs.fzf = {
     enable = true;
   };
-
-  services.ssh-agent = {
-    enable = true;
-  };
 }
