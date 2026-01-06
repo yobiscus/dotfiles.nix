@@ -7,7 +7,7 @@
 
 ## Tools to configure
 
-- [ ] zsh (oh-my-posh? oh-my-zsh plugin?)
+- [ ] zsh: replace oh-my-posh with something that supports async prompts
 
 ## Dev environments
 
