@@ -25,7 +25,7 @@
             "cache_duration": "none"
           },
           "leading_diamond": "",
-          "template": "{{ .UserName }}{{ if .SSHSession }}@{{ .HostName }}{{ end }}",
+          "template": "{{ .UserName }}",
           "foreground": "#003256",
           "background": "#a1cdff",
           "type": "session",
