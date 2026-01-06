@@ -10,20 +10,28 @@ cd ~/.dotfiles
 git submodule update --init
 ```
 
-**Ubuntu:**
+**Ubuntu desktop:**
 
 ```bash
-~/.dotfiles/ubuntu-init.sh
+~/.dotfiles/init.ubuntu-desktop.sh
 ```
 
-**macOS:**
+**macOS desktop:**
 
 Some nix modules are not compatible with macOS (haven't looked into it). Use
 homebrew for package management. The `mac-init.sh` script just creates
 symlinks.
 
 ```bash
-~/.dotfiles/mac-init.sh
+~/.dotfiles/init.macos-desktop.sh
+```
+
+**Linux server:**
+
+Generic Linux machine, single-user Nix setup using nix-user-chroot.
+
+```bash
+~/dotfiles/init.linux-server.sh
 ```
 
 ## Screenshot

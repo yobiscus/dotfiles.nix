@@ -1,8 +1,8 @@
-{ config, pkgs, lib, ... }:
+{ config, lib, pkgs, ... }:
 
 {
   home.username = "jogravel";
-  home.homeDirectory = "/home/jogravel";
+  home.homeDirectory = builtins.getEnv "HOME";
   home.stateVersion = "25.05"; # Don't change this, generally.
   programs.home-manager.enable = true;
 
@@ -19,7 +19,15 @@
     ./modules/neovim.nix
     ./modules/terminal
   ]
-  ++ lib.optional (builtins.pathExists ./modules/personal/default.nix) ./modules/personal/default.nix
-  ++ lib.optional (builtins.pathExists ./modules/wm/default.nix) ./modules/wm/default.nix
+  ++ lib.optional (builtins.getEnv "NIX_HM_PERSONAL" == "1") ./modules/personal
+  ++ lib.optional (builtins.getEnv "NIX_HM_WM" == "1") ./modules/wm
+  ;
+
+  # mark NIX_HM in environment, and persist configuration env options
+  home.sessionVariables = {
+    NIX_HM_INITIALIZED = "1";
+  }
+  // lib.optionalAttrs (builtins.getEnv "NIX_HM_PERSONAL" == "1") { "NIX_HM_PERSONAL" = "1"; }
+  // lib.optionalAttrs (builtins.getEnv "NIX_HM_WM" == "1") { "NIX_HM_WM" = "1"; }
   ;
 }

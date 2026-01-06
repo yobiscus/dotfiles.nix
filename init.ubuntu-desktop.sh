@@ -21,11 +21,11 @@ fi
 #
 
 # Install Nix Home Manager
+export HM_HM_PERSONAL=1 NIX_HM_WM=1
 if [[ ! -e $HOME/.nix-profile/bin/home-manager ]]; then
     [[ -d $HOME/.config/home-manager ]] && mv $HOME/.config/home-manager{,.bak}
     ln -sf $HOME/.dotfiles/config/home-manager $HOME/.config/home-manager
-    nix run home-manager/master -- init --switch $HOME/.config/home-manager
-    home-manager switch --flake $HOME/.config/home-manager
+    nix run home-manager/master -- init --impure --switch --flake "$HOME/.config/home-manager"
 fi
 
 #
@@ -40,12 +40,13 @@ if [[ ! -e $hyprland_desktop ]]; then
         nixgl
     nix-channel --update
     nix-env -iA nixgl.auto.nixGLDefault
-fi
-sudo tee /usr/share/wayland-sessions/hyprland.desktop >/dev/null <<EOF
-[Desktop Entry]
-Exec=nixGL Hyprland
-Name=Hyprland
+
+    sudo tee "$hyprland_desktop" >/dev/null <<EOF
+    [Desktop Entry]
+    Exec=nixGL Hyprland
+    Name=Hyprland
 EOF
+fi
 
 # Remove unnecesary packages (TODO)
 sudo apt purge curl firefox
