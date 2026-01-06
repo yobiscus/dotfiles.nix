@@ -19,6 +19,13 @@ source ~/.config/zsh/conf/history.zsh
 source ~/.config/zsh/conf/aliases.zsh
 
 # -----------------------------------------------------
+# Context settings
+# -----------------------------------------------------
+if [[ -r ~/.config/zsh/work/main.zsh ]]; then
+    source ~/.config/zsh/work/main.zsh
+fi
+
+# -----------------------------------------------------
 # TODO: direnv
 # -----------------------------------------------------
 
