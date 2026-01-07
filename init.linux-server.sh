@@ -2,21 +2,26 @@
 #
 # Initialize Nix toolchain and dotfiles in single-user installation mode
 #
-# Must be run inside `nix-user-chroot ~/.nix bash -l` chroot
+# Works with https://github.com/DavHau/nix-portable
+#
 
-if [[ ! -d /nix/store ]]; then
-    sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --no-daemon
-    mkdir -p /nix/etc/nix
-    echo experimental-features = nix-command flakes \
-        | tee -a /nix/etc/nix/nix.conf
+set -e
+
+if [[ ! -d ~/.nix-portable ]]; then
+    curl -L https://github.com/DavHau/nix-portable/releases/latest/download/nix-portable-$(uname -m) > ~/.local/bin/nix-portable
+    chmod +x ~/.local/bin/nix-portable
+    ln -s nix-portable ~/.local/bin/nix
+    ln -s nix-portable ~/.local/bin/nix-collect-garbage
+    ln -s nix-portable ~/.local/bin/nix-shell
+    # populate nix-portable and make sure it works
+    nix-shell -p bash --run exit
 fi
-
-#
-# May need to log out and back in at this point
-#
 
 if [[ ! -e $HOME/.nix-profile/bin/home-manager ]]; then
     [[ -d $HOME/.config/home-manager ]] && mv $HOME/.config/home-manager{,.bak}
     ln -sf "$HOME/.dotfiles/config/home-manager" "$HOME/.config/home-manager"
-    nix run home-manager/master -- init --impure --switch --flake "$HOME/.config/home-manager"
+    NP_RUNTIME=bwrap nix run home-manager/master -- \
+        init "$(readlink -f "$HOME/.config/home-manager")" \
+        --flake "$(readlink -f "$HOME/.config/home-manager")" \
+        --impure --switch
 fi
