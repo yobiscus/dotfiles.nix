@@ -1,17 +1,19 @@
 #
 # Symlink this to ~/.zshrc if no using Nix Home Manager
 #
-
 # Prefer zsh shell in terminal
 zsh_bin=$(which zsh)
 [[ -n "$zsh_bin" ]] && SHELL=$zsh_bin
 unset zsh_bin
 
+autoload -U compinit && compinit
+
 # Source manually installed plugins
-#   git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh_plug/zsh-autosuggestions
+#   git clone https://github.com/zsh-users/zsh-autosuggestions ~/.zsh_plug/
+#   git clone https://github.com/zsh-users/zsh-syntax-highlighting ~/.zsh_plug/
 zsh_plugs=~/.zsh_plugs
 for plug in zsh-autosuggestions zsh-syntax-highlighting; do
-    [[ -e "$zsh_plugs/$plug" ]] && source $zsh_plugs/$plug/$plug.zsh
+    [[ -e "$zsh_plugs/$plug/$plug.plugin.zsh" ]] && echo $plug && source $zsh_plugs/$plug/$plug.plugin.zsh
 done
 unset zsh_plugs
 
