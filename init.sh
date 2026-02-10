@@ -79,7 +79,6 @@ if [[ $opt_dotfiles_only ]]; then
     # prepare to symlink second level config files from main and selected modules
     repoconfigs=(~/.dotfiles/config/*/*)
     for module in "${opt_modules[@]}"; do
-        echo $module
         repoconfigs+=(~/.dotfiles/"$module"/config/*/*)
     done
 
@@ -110,6 +109,58 @@ if [[ $opt_dotfiles_only ]]; then
         # install
         ln -sv ~/.config/zsh/zshrc ~/.zshrc
     fi
-else
-    fatal "Only --dotfiles-only is implemented"
+    exit 0
+elif [[ ! $(head -n1 /etc/lsb-release 2>/dev/null) =~ Ubuntu ]]; then
+    fatal "Full install only supported on Ubuntu - use --dotfiles-only option instead"
 fi
+
+# Assume Ubuntu at this point
+
+sudo apt update
+sudo apt dist-upgrade
+
+# Install Nix
+if [[ ! -d /nix ]]; then
+    sudo apt install curl
+    sh <(curl --proto '=https' --tlsv1.2 -L https://nixos.org/nix/install) --daemon
+    echo experimental-features = nix-command flakes \
+        | sudo tee -a /etc/nix/nix.conf
+    sudo systemctl restart nix-daemon.service
+fi
+
+# Install Nix Home Manager
+for module in "${opt_modules[@]}"; do
+    case $module in
+        personal) export NIX_HM_PERSONAL=1          ;;
+        wm)       export NIX_HM_WM=1                ;;
+        work)     export NIX_HM_WORK=1              ;;
+        *)        fatal "Unhandled module: $module" ;;
+    esac
+done
+
+if [[ ! -e $HOME/.nix-profile/bin/home-manager ]]; then
+    [[ -d $HOME/.config/home-manager ]] && mv $HOME/.config/home-manager{,.bak}
+    ln -sf $HOME/.dotfiles/config/home-manager $HOME/.config/home-manager
+    nix run home-manager/master -- init --impure --switch --flake "$HOME/.config/home-manager"
+fi
+
+# Finish configuring Hyprland
+hyprland_desktop=/usr/share/wayland-sessions/hyprland.desktop
+if [[ ! -e $hyprland_desktop ]]; then
+    nix-channel \
+        --add https://github.com/nix-community/nixGL/archive/main.tar.gz \
+        nixgl
+    nix-channel --update
+    nix-env -iA nixgl.auto.nixGLDefault
+
+    sudo tee "$hyprland_desktop" >/dev/null <<EOF
+    [Desktop Entry]
+    Exec=nixGL Hyprland
+    Name=Hyprland
+EOF
+
+    sudo apt install sddm
+fi
+
+# Remove unnecesary packages (TODO)
+sudo apt purge curl firefox
