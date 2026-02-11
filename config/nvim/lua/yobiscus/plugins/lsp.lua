@@ -3,8 +3,10 @@ return {
 	dependencies = { "saghen/blink.cmp" },
 	opts = {
 		servers = {
+			bashls = {},
 			clangd = {},
 			lua_ls = {},
+			perlnavigator = {},
 			rust_analyzer = {
 				settings = {
 					["rust-analyzer"] = {
