@@ -163,4 +163,4 @@ EOF
 fi
 
 # Remove unnecesary packages (TODO)
-sudo apt purge curl firefox
+sudo apt purge curl
