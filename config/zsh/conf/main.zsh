@@ -34,6 +34,8 @@ fi
 # Miscellaneous
 # -----------------------------------------------------
 bindkey -e  # undo vimode due to EDITOR=vi
+autoload -Uz select-word-style
+select-word-style bash
 
 # -----------------------------------------------------
 # Greeting
