@@ -11,7 +11,7 @@ sudo -i systemctl daemon-reload
 sudo -i systemctl restart nix-daemon
 
 # update home-manager packages
-home-manager switch
+home-manager switch --impure
 
 # show home-manager package diff
 "$SCRIPT_DIR/home-manager-diff-last"

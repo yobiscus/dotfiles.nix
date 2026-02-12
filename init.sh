@@ -155,7 +155,7 @@ if [[ ! -e $hyprland_desktop ]]; then
 
     sudo tee "$hyprland_desktop" >/dev/null <<EOF
     [Desktop Entry]
-    Exec=nixGL Hyprland
+    Exec=nixGL start-hyprland
     Name=Hyprland
 EOF
 
