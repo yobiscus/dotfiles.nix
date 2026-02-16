@@ -3,11 +3,18 @@ return {
 		"https://github.com/lewis6991/gitsigns.nvim",
 		config = function()
 			local gitsigns = require("gitsigns")
-			gitsigns.setup()
+			gitsigns.setup({
+				attach_to_untracked = true,
+			})
 
 			-- modes
 			vim.keymap.set("n", "<leader>gb", gitsigns.blame, { desc = "Toggle blame" })
+			vim.keymap.set("n", "<leader>gc", gitsigns.show_commit, { desc = "Toggle commit" })
+			vim.keymap.set("n", "<leader>gq", gitsigns.setqflist, { desc = "Toggle quickfix list (buffer)" })
 			vim.keymap.set("n", "<leader>gv", gitsigns.preview_hunk, { desc = "Toggle hunk preview" })
+			vim.keymap.set("n", "<leader>gx", function()
+				gitsigns.setqflist("all")
+			end, { desc = "Toggle quickfix list (all)" })
 
 			-- mutation
 			vim.keymap.set("n", "<leader>gs", function()
