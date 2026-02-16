@@ -10,7 +10,7 @@ return {
 		},
 		keys = {
 			{ "<leader>ac", "<cmd>CodeCompanionChat Toggle<cr>", desc = "AI Chat" },
-			{ "<leader>ax", "<cmd>CodeCompanionActions<cr>",     desc = "AI Actions" },
+			{ "<leader>ax", "<cmd>CodeCompanionActions<cr>", desc = "AI Actions" },
 		},
 		config = function()
 			require("codecompanion").setup({
@@ -26,6 +26,13 @@ return {
 							return require("codecompanion.adapters").extend("codex", {
 								defaults = {
 									auth_method = "chatgpt",
+								},
+							})
+						end,
+						claude_code = function()
+							return require("codecompanion.adapters").extend("claude_code", {
+								env = {
+									CLAUDE_CODE_OAUTH_TOKEN = "cmd:gopass show -o -f misc/claude-code-api | tr -d '\n'",
 								},
 							})
 						end,
