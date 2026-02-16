@@ -10,6 +10,7 @@ vim.opt.relativenumber = true
 vim.opt.list = true
 vim.opt.listchars = { tab = "▸ ", trail = "·", nbsp = "␣", extends = ">", precedes = "<" }
 vim.opt.shell = "/bin/bash" -- fish shell for example is much slower
+vim.opt.wrapscan = false -- stop searching when we get to bottom
 
 -- keymaps
 vim.keymap.set("n", "<leader>on", "<cmd>Ex<cr>", { desc = "Netrw" })
