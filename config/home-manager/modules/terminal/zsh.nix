@@ -8,6 +8,7 @@
   programs.zsh = {
     enable = true;
     autosuggestion.enable = true;
+    dotDir = "${config.xdg.configHome}/zsh";
     syntaxHighlighting.enable = true;
     history = {
       # settings duplicated in .config/zsh/conf/history.zsh since there is no
@@ -23,7 +24,7 @@
       zshConfigLast = lib.mkOrder 1500 "source $HOME/.config/zsh/conf/main.zsh";
     in lib.mkMerge [ zshConfigEarlyInit zshConfigLast ];
   };
-  home.file.".config/zsh".source = ../../../zsh;
+  home.file.".config/zsh/conf".source = ../../../zsh/conf;
 
   # integrations
   programs.direnv.enableZshIntegration = true;
