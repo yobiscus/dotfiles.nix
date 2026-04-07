@@ -2,5 +2,5 @@
 
 set -e
 
-home-manager switch --impure
+home-manager switch --impure "$@"
 "$HOME/.dotfiles/scripts/home-manager-diff-last"

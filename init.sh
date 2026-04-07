@@ -162,5 +162,26 @@ EOF
     sudo apt install sddm
 fi
 
+# Consider the systemd unit below if /nix is on a different partition.
+#
+#   vi /etc/systemd/system/nix-online.service
+#   systemctl enable nix-online.service
+#   systemctl start nix-online.service
+#
+# [Unit]
+# Description=Bring Nix services online
+# After=nix.mount
+# Requires=nix.mount
+# DefaultDependencies=no
+#
+# [Service]
+# Type=oneshot
+# RemainAfterExit=yes
+# ExecStart=/usr/bin/systemctl daemon-reload
+# ExecStart=/usr/bin/systemctl restart --no-block nix-daemon.socket
+#
+# [Install]
+# WantedBy=sysinit.target
+
 # Remove unnecesary packages (TODO)
 sudo apt purge curl
