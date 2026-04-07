@@ -12,6 +12,7 @@
     pkgs.clang-tools
     pkgs.lua-language-server
     pkgs.stylua
+    pkgs.yamllint
   ];
 
   home.sessionVariables = {
