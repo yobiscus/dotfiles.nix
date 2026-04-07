@@ -14,6 +14,7 @@
   };
 
   imports = [
+    ./modules/devenv.nix
     ./modules/fonts.nix
     ./modules/git.nix
     ./modules/neovim.nix
