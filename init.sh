@@ -162,6 +162,7 @@ EOF
     sudo apt install sddm
 fi
 
+#
 # Consider the systemd unit below if /nix is on a different partition.
 #
 #   vi /etc/systemd/system/nix-online.service
@@ -182,6 +183,18 @@ fi
 #
 # [Install]
 # WantedBy=sysinit.target
+#
+
+#
+# Consider this /usr/local/bin/hyprland-launch wrapper for Nvidia GPU
+# compatibility (may need to hardcode $USER as that variable may not
+# be correct on login):
+#
+# #!/bin/bash
+# export PATH=/home/$USER/.nix-profile/bin:$PATH
+# export XDG_DATA_DIRS=/home/$USER/.nix-profile/share:/nix/var/nix/profiles/default/share:${XDG_DATA_DIRS:-/usr/local/share:/usr/share}
+# exec nixGL start-hyprland
+#
 
 # Remove unnecesary packages (TODO)
 sudo apt purge curl
