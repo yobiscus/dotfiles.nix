@@ -29,7 +29,6 @@
   # integrations
   programs.direnv.enableZshIntegration = true;
   programs.fzf.enableZshIntegration = true;
-  services.ssh-agent.enableZshIntegration = true;
 
   programs.oh-my-posh = {
     enable = true;
