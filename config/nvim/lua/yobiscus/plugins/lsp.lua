@@ -32,6 +32,31 @@ return {
 					},
 				},
 			},
+			tailwindcss = {
+				filetypes = {
+					"html",
+					"css",
+					"javascript",
+					"typescript",
+					"javascriptreact",
+					"typescriptreact",
+					"rust",
+				},
+				settings = {
+					tailwindCSS = {
+						classAttributes = { "class", "className", "class:list", "classList", "ngClass" },
+						includeLanguages = {
+							rust = "html",
+						},
+						experimental = {
+							classRegex = {
+								[[class:?\s*"(.*)"]], -- Matches class: "..." or class "..."
+								[[(?:class|className)\s*=\s*"([^"]*)]], -- Matches class="..."
+							},
+						},
+					},
+				},
+			},
 		},
 	},
 	config = function(_, opts)

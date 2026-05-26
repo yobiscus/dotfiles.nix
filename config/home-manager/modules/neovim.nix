@@ -12,6 +12,7 @@
     pkgs.clang-tools
     pkgs.lua-language-server
     pkgs.stylua
+    pkgs.tailwindcss-language-server
     pkgs.yamllint
   ];
 
