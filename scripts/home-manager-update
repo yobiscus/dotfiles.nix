@@ -6,7 +6,7 @@ SCRIPT_DIR=$(cd "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 
 # update nix
 sudo -i nix-channel --update
-sudo -i nix-env --install --attr nixpkgs.nix nixpkgs.cacert
+# sudo -i nix-env --install --attr nixpkgs.nix nixpkgs.cacert
 sudo -i systemctl daemon-reload
 sudo -i systemctl restart nix-daemon
 
