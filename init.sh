@@ -188,4 +188,5 @@ fi
 #
 
 # Remove unnecesary packages (TODO)
-sudo apt purge curl
+sudo apt purge curl firefox
+sudo snap remove firefox
