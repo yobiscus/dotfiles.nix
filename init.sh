@@ -153,9 +153,11 @@ if [[ ! -e $hyprland_desktop ]]; then
     nix-channel --update
     nix-env -iA nixgl.auto.nixGLDefault
 
+    sudo cp ~/.dotfiles/wm/support/hyprland-launch /usr/local/bin/
+
     sudo tee "$hyprland_desktop" >/dev/null <<EOF
     [Desktop Entry]
-    Exec=nixGL start-hyprland
+    Exec=/usr/local/bin/hyprland-launch
     Name=Hyprland
 EOF
 
@@ -183,17 +185,6 @@ fi
 #
 # [Install]
 # WantedBy=sysinit.target
-#
-
-#
-# Consider this /usr/local/bin/hyprland-launch wrapper for Nvidia GPU
-# compatibility (may need to hardcode $USER as that variable may not
-# be correct on login):
-#
-# #!/bin/bash
-# export PATH=/home/$USER/.nix-profile/bin:$PATH
-# export XDG_DATA_DIRS=/home/$USER/.nix-profile/share:/nix/var/nix/profiles/default/share:${XDG_DATA_DIRS:-/usr/local/share:/usr/share}
-# exec nixGL start-hyprland
 #
 
 # Remove unnecesary packages (TODO)
