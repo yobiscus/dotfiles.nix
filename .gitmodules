@@ -7,3 +7,6 @@
 [submodule "work"]
 	path = work
 	url = git@github.com:yobiscus/dotfiles.nix-work
+[submodule "config/tmux/tmux-fingers"]
+	path = config/tmux/tmux-fingers
+	url = https://github.com/Morantron/tmux-fingers
