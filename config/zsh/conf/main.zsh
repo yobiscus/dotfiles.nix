@@ -3,6 +3,7 @@
 # -----------------------------------------------------
 typeset -U path cdpath fpath manpath
 path+=("$HOME/npm/bin")
+path+=("$HOME/.local/bin")
 
 # -----------------------------------------------------
 # Completion

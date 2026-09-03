@@ -2,6 +2,7 @@
 
 {
   imports = [
+    ./herdr.nix
     ./tmux.nix
     ./zsh.nix
   ];
