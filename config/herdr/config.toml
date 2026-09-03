@@ -1,16 +1,15 @@
 onboarding = false
 
-[terminal]
-new_cwd = "follow"
-
 [keys]
 prefix = "ctrl+space"
 switch_tab = "alt+1..9"
+previous_agent = "prefix+,"
+next_agent = "prefix+."
+focus_agent = "prefix+1..9"
 
 [ui]
 status_indicators = "symbols"
 agent_panel_sort = "spaces"
 
 [ui.toast]
-delivery = "herdr"
-delay_seconds = 1
+delivery = "herdr"  # TODO: try "system" or "terminal"
