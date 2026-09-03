@@ -7,6 +7,18 @@ previous_agent = "prefix+,"
 next_agent = "prefix+."
 focus_agent = "prefix+1..9"
 
+[[keys.command]]
+key = "prefix+e"
+type = "plugin_action"
+command = "chmarax.herdr-nvim.toggle"
+description = "nvim sidebar"
+
+[[keys.command]]
+key = "prefix+o"
+type = "plugin_action"
+command = "chmarax.herdr-nvim.pick-file"
+description = "open file from agent output"
+
 [ui]
 status_indicators = "symbols"
 agent_panel_sort = "spaces"
