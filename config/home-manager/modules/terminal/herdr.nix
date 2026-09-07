@@ -1,9 +1,9 @@
 { config, pkgs, lib, ... }:
 
 {
-  home.packages = [
-    #pkgs.herdr
-  ];
+  programs.herdr = {
+    enable = true;
+  };
 
   home.file.".config/herdr/config.toml".source =
     config.lib.file.mkOutOfStoreSymlink
