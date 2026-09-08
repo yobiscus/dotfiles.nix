@@ -7,7 +7,7 @@
 # -----------------------------------------------------
 et-herdr() {
     while : ; do
-        herdr --remote "$@"
+        herdr --remote-keybindings server --remote "$@"
         echo "Auto-reconnecting to '$1'. Ctrl+C to cancel."
         sleep 1s || break
     done
