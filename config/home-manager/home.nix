@@ -18,6 +18,7 @@
     ./modules/fonts.nix
     ./modules/git.nix
     ./modules/neovim.nix
+    ./modules/rust.nix
     ./modules/terminal
   ]
   ++ lib.optional (builtins.getEnv "NIX_HM_PERSONAL" == "1") ./modules/personal
