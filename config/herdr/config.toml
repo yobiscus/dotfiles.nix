@@ -2,7 +2,8 @@ onboarding = false
 
 [keys]
 prefix = "ctrl+space"
-switch_tab = "alt+1..9"
+switch_workspace = "alt+1..9"
+switch_tab = "alt+shift+1..9"
 previous_agent = "prefix+,"
 next_agent = "prefix+."
 focus_agent = "prefix+1..9"
