@@ -24,6 +24,12 @@ type = "plugin_action"
 command = "chmarax.herdr-nvim.pick-file"
 description = "open file from agent output"
 
+[[keys.command]]
+key = "prefix+shift+c"
+type = "plugin_action"
+command = "scoopr.open"
+description = "Scoop text from current tab"
+
 [ui]
 status_indicators = "symbols"
 agent_panel_sort = "spaces"
