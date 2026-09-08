@@ -6,6 +6,10 @@ switch_tab = "alt+1..9"
 previous_agent = "prefix+,"
 next_agent = "prefix+."
 focus_agent = "prefix+1..9"
+focus_pane_left = "ctrl+h"
+focus_pane_down = "ctrl+j"
+focus_pane_up = "ctrl+k"
+focus_pane_right = "ctrl+l"
 
 [[keys.command]]
 key = "prefix+e"
