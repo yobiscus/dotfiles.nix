@@ -18,6 +18,7 @@
 
 - [ ] Customize wofi l&f
 - [ ] Automatically regenerate matugen colors when changing wallpaper
+- [ ] Fixup neovim colorscheme for perl, python (maybe use nightfox.nvim instead of base16-nvim?)
 
 ## Multi-monitor
 
