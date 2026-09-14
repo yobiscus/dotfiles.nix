@@ -8,6 +8,10 @@
       url = "github:nix-community/home-manager";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    gome = {
+      url = "git+ssh://git@github.com/yobiscus/gome.git";
+      flake = false;
+    };
     pam-shim = {
       url = "github:Cu3PO42/pam_shim/next";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -19,7 +23,7 @@
   };
 
   outputs =
-    { nixpkgs, home-manager, pam-shim, ... }:
+    { nixpkgs, home-manager, pam-shim, gome, ... }:
     let
       system = "x86_64-linux";
       pkgs = nixpkgs.legacyPackages.${system};
@@ -35,8 +39,7 @@
           pam-shim.homeModules.default
         ];
 
-        # Optionally use extraSpecialArgs
-        # to pass through arguments to home.nix
+        extraSpecialArgs = { inherit gome; };
       };
     };
 }

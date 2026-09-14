@@ -1,5 +1,21 @@
 {
   "nodes": {
+    "gome": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1789411378,
+        "narHash": "sha256-jljQFbZBepB5G+tJ+BEWLTO+JvZDv3CruVrsHZG5COA=",
+        "ref": "refs/heads/main",
+        "rev": "de07c0ca36d898c698f241ebde5742865a04d01a",
+        "revCount": 12,
+        "type": "git",
+        "url": "ssh://git@github.com/yobiscus/gome.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://git@github.com/yobiscus/gome.git"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -59,6 +75,7 @@
     },
     "root": {
       "inputs": {
+        "gome": "gome",
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs",
         "pam-shim": "pam-shim"
