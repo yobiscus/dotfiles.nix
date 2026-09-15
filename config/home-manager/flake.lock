@@ -3,10 +3,10 @@
     "gome": {
       "flake": false,
       "locked": {
-        "lastModified": 1789411378,
-        "narHash": "sha256-jljQFbZBepB5G+tJ+BEWLTO+JvZDv3CruVrsHZG5COA=",
+        "lastModified": 1789431910,
+        "narHash": "sha256-BxWI3hkcqaJlrFg84En5vIsEuFZr+kVwTIVhXNHxaks=",
         "ref": "refs/heads/main",
-        "rev": "de07c0ca36d898c698f241ebde5742865a04d01a",
+        "rev": "dbc10eb4cadbb637160dbff185cbf9bde58ba083",
         "revCount": 12,
         "type": "git",
         "url": "ssh://git@github.com/yobiscus/gome.git"
