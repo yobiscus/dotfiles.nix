@@ -27,6 +27,8 @@ if [[ -r ~/.config/zsh/work/main.zsh ]]; then
     source ~/.config/zsh/work/main.zsh
 fi
 
+source ~/.config/zsh/conf/ssh-agent.zsh
+
 # -----------------------------------------------------
 # TODO: direnv
 # -----------------------------------------------------
