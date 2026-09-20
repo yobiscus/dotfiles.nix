@@ -5,10 +5,6 @@
 - [ ] Personal and wm modules should be optional. Unitialized submodules are
       breaks flakes. Need another solution.
 
-## Tools to configure
-
-- [ ] zsh: replace oh-my-posh with something that supports async prompts
-
 ## Dev environments
 
 - [ ] cargo, rust-lsp, etc.
