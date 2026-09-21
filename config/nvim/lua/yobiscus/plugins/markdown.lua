@@ -1,7 +1,6 @@
 return {
-	"MeanderingProgrammer/render-markdown.nvim",
-	opts = {
-		file_types = { "codecompanion", "Avante" },
-	},
-	ft = { "codecompanion", "Avante" },
+    'MeanderingProgrammer/render-markdown.nvim',
+    dependencies = { 'nvim-treesitter/nvim-treesitter', 'nvim-mini/mini.icons' },        -- if you use standalone mini plugins
+    ---@module 'render-markdown'
+    opts = {},
 }
