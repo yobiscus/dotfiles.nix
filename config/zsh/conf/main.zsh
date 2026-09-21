@@ -43,4 +43,4 @@ select-word-style bash
 # -----------------------------------------------------
 # Greeting
 # -----------------------------------------------------
-fastfetch
+(( $+commands[fastfetch] )) && fastfetch
