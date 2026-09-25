@@ -1,58 +1,82 @@
 # Dotfiles
 
-Powered by Nix Home Manager.
+This repository contains standalone user configuration files and a Nix Home
+Manager setup. `personal`, `work`, and `wm` are Git submodules.
 
-## Instructions
+## Checkout
 
 ```bash
 git clone git@github.com:yobiscus/dotfiles.nix ~/.dotfiles
 cd ~/.dotfiles
-git submodule update --init
+git submodule update --init --recursive
 ```
 
-**Ubuntu desktop:**
+## Setup
+
+### Ubuntu full setup
+
+Run the full bootstrap on Ubuntu:
 
 ```bash
-~/.dotfiles/init.ubuntu-desktop.sh
+./init.sh
 ```
 
-**macOS desktop:**
-
-Some nix modules are not compatible with macOS (haven't looked into it). Use
-homebrew for package management. The `mac-init.sh` script just creates
-symlinks.
+On the first Home Manager bootstrap, optional modules can be selected with
+repeated `-m` flags (`personal`, `work`, or `wm`):
 
 ```bash
-~/.dotfiles/init.macos-desktop.sh
+./init.sh -m personal -m wm
 ```
 
-**Linux server:**
+The full setup is Ubuntu-only. It runs `apt update` and `apt dist-upgrade`,
+installs Nix's multi-user setup when `/nix` is absent, and bootstraps Home
+Manager if it is not already installed. It also prepares a Hyprland login
+session (installing nixGL and SDDM when needed), purges the apt `curl` and
+Firefox packages, and removes the Firefox snap. There is no separate Linux
+server bootstrap. Review [init.sh](init.sh) before running the full setup on an
+existing system.
 
-Generic Linux machine, single-user Nix setup using nix-user-chroot.
+The Home Manager flake currently targets `x86_64-linux` and configures the
+`jogravel` account. Adapt `config/home-manager` for another account or
+architecture. `init.sh` does not switch an existing Home Manager profile; after
+setup, use `scripts/home-manager-switch` to apply configuration changes.
+
+### Dotfiles only
+
+On macOS, non-Ubuntu Linux, or when you only want the config links, run:
 
 ```bash
-~/dotfiles/init.linux-server.sh
+./init.sh --dotfiles-only
 ```
 
-**Ubuntu OpenSSH server:**
-
-Install and enable OpenSSH with key-only authentication for the account running
-the script:
+Optional modules can also be selected in this mode:
 
 ```bash
-~/.dotfiles/scripts/setup/openssh.sh
+./init.sh --dotfiles-only -m wm
 ```
 
-Set `SSH_ADMIN_USER` to select a different account, for example:
+This mode does not install Nix or packages. It links the selected files from
+`config/` into `~/.config/` and links `~/.zshrc`; it stops if those destinations
+already contain files or symlinks. Install required applications separately.
+On macOS, this only places the config files; review or adapt them for the apps
+you use.
+
+## OpenSSH server
+
+On Ubuntu, [scripts/setup/openssh.sh](scripts/setup/openssh.sh) installs and
+enables OpenSSH with key-only authentication, root login disabled, and access
+restricted to one non-root account. By default it uses the account running the
+script; set `SSH_ADMIN_USER` to choose another account:
 
 ```bash
-SSH_ADMIN_USER=alice ~/.dotfiles/scripts/setup/openssh.sh
+SSH_ADMIN_USER=alice ./scripts/setup/openssh.sh
 ```
 
-Add client public keys to that account's `.ssh/authorized_keys` before relying
-on SSH access. The config template is `scripts/setup/openssh.conf.in`; it also
-disables SSH forwarding. The script does not change firewall or router
-settings, so keep port 22 unforwarded from the internet.
+Add connecting devices' public keys to that account's `.ssh/authorized_keys`
+before relying on SSH access. The config template is
+`scripts/setup/openssh.conf.in`; it disables SSH forwarding. The installer does
+not change firewall or router settings, so keep port 22 unforwarded from the
+internet.
 
 ## Screenshot
 
