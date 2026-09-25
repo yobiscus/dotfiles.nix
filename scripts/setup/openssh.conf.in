@@ -1,0 +1,27 @@
+# Key-only administrative SSH. The setup script fills in the selected account.
+# This file sorts before cloud-init and package snippets on Ubuntu.
+PubkeyAuthentication yes
+AuthenticationMethods publickey
+PasswordAuthentication no
+KbdInteractiveAuthentication no
+PermitEmptyPasswords no
+PermitRootLogin no
+AllowUsers @SSH_ADMIN_USER@
+
+LoginGraceTime 30
+MaxAuthTries 3
+MaxSessions 5
+ClientAliveInterval 300
+ClientAliveCountMax 2
+StrictModes yes
+
+DisableForwarding yes
+X11Forwarding no
+PermitTunnel no
+PermitUserEnvironment no
+PermitUserRC no
+HostbasedAuthentication no
+GSSAPIAuthentication no
+
+DebianBanner no
+LogLevel VERBOSE

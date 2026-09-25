@@ -34,6 +34,26 @@ Generic Linux machine, single-user Nix setup using nix-user-chroot.
 ~/dotfiles/init.linux-server.sh
 ```
 
+**Ubuntu OpenSSH server:**
+
+Install and enable OpenSSH with key-only authentication for the account running
+the script:
+
+```bash
+~/.dotfiles/scripts/setup/openssh.sh
+```
+
+Set `SSH_ADMIN_USER` to select a different account, for example:
+
+```bash
+SSH_ADMIN_USER=alice ~/.dotfiles/scripts/setup/openssh.sh
+```
+
+Add client public keys to that account's `.ssh/authorized_keys` before relying
+on SSH access. The config template is `scripts/setup/openssh.conf.in`; it also
+disables SSH forwarding. The script does not change firewall or router
+settings, so keep port 22 unforwarded from the internet.
+
 ## Screenshot
 
 ![desktop screenshot](images/screenshot01.png)
