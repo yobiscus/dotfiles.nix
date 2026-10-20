@@ -1,8 +1,19 @@
 #!/bin/bash
 
-set -e
+set -eo pipefail
 
-# show home-manager package diff from last two generations
-generations=($(home-manager generations | head -n2 | tac | awk '{ print $7 }'))
-echo "Diff: ${generations[0]}..${generations[1]}"
-nix store diff-closures "${generations[@]}"
+state_file="${XDG_STATE_HOME:-$HOME/.local/state}/dotfiles/home-manager-last-switch"
+if [[ ! -f "$state_file" ]]; then
+  echo "No recorded Home Manager switch; run hms first."
+  exit 0
+fi
+
+mapfile -t generations < "$state_file"
+if (( ${#generations[@]} != 2 )) || [[ -z "${generations[0]}" || -z "${generations[1]}" ]]; then
+  echo "No generation diff available for the last Home Manager switch."
+elif [[ "${generations[0]}" == "${generations[1]}" ]]; then
+  echo "Home Manager generation unchanged."
+else
+  echo "Diff: ${generations[0]}..${generations[1]}"
+  nix store diff-closures "${generations[0]}" "${generations[1]}"
+fi

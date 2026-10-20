@@ -1,6 +1,26 @@
 #!/bin/bash
 
-set -e
+set -eo pipefail
 
+for arg in "$@"; do
+  case "$arg" in
+    -n|--dry-run|-h|--help|--version)
+      exec home-manager switch --impure "$@"
+      ;;
+  esac
+done
+
+before=$(home-manager generations 2>/dev/null | awk '/\(current\)$/ { print $7 }' || true)
 home-manager switch --impure "$@"
-"$HOME/.dotfiles/scripts/home-manager-diff-last"
+after=$(home-manager generations | awk '/\(current\)$/ { print $7 }' || true)
+
+state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/dotfiles"
+if ! { mkdir -p "$state_dir" && printf '%s\n' "$before" "$after" > "$state_dir/home-manager-last-switch"; }; then
+  echo "Home Manager switched successfully, but saving the generation diff failed." >&2
+  exit 0
+fi
+
+SCRIPT_DIR=$(cd "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
+if ! "$SCRIPT_DIR/home-manager-diff-last"; then
+  echo "Home Manager switched successfully, but the generation diff failed." >&2
+fi

@@ -42,6 +42,25 @@ environment values, so keep `--impure` when invoking Home Manager. `init.sh`
 does not switch an existing Home Manager profile; after setup, use
 `scripts/home-manager-switch` to apply configuration changes.
 
+`hms` switches Home Manager and compares the active generation before and
+after the switch. Arguments are passed through to Home Manager; dry runs,
+help, and version output skip the diff.
+
+`scripts/home-manager-diff-last` repeats the comparison from the last successful
+`hms` run, including an unchanged generation. Both store paths are saved in
+`${XDG_STATE_HOME:-$HOME/.local/state}/dotfiles/home-manager-last-switch`.
+Failed switches, dry runs, help, and version output leave this record unchanged.
+
+Run `hmc`, or `scripts/home-manager-clean`, separately to expire Home Manager
+generations older than 30 days, preserving the current generation, then run
+`nix-collect-garbage` followed by `nix store optimise`. Use `hmc --dry-run` to
+preview expiration and garbage collection without changing the store.
+
+Run `scripts/home-manager-update` to update the Home Manager flake's lock file
+and switch using the updated inputs. It uses
+`${XDG_CONFIG_HOME:-$HOME/.config}/home-manager`, resolving symlinks to the
+configuration directory.
+
 ### Dotfiles only
 
 On macOS, non-Ubuntu Linux, or when you only want the config links, run:

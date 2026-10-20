@@ -2,16 +2,12 @@
 
 set -e
 
+if (( $# > 0 )); then
+  echo "Usage: ${0##*/}" >&2
+  exit 2
+fi
+
 SCRIPT_DIR=$(cd "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
-
-# update nix
-sudo -i nix-channel --update
-# sudo -i nix-env --install --attr nixpkgs.nix nixpkgs.cacert
-sudo -i systemctl daemon-reload
-sudo -i systemctl restart nix-daemon
-
-# update home-manager packages
-home-manager switch --impure
-
-# show home-manager package diff
-"$SCRIPT_DIR/home-manager-diff-last"
+flake_dir=$(readlink -f "${XDG_CONFIG_HOME:-$HOME/.config}/home-manager")
+nix flake update --flake "$flake_dir"
+exec "$SCRIPT_DIR/home-manager-switch" --flake "$flake_dir"

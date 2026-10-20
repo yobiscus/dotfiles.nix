@@ -19,6 +19,7 @@
     shellAliases = {
       hm = "home-manager";
       hms = "$HOME/.dotfiles/scripts/home-manager-switch";
+      hmc = "$HOME/.dotfiles/scripts/home-manager-clean";
     };
     initContent = let
       zshConfigEarlyInit = lib.mkOrder 500 "export SHELL=${pkgs.zsh}/bin/zsh";

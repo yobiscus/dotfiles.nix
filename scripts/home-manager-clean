@@ -1,0 +1,27 @@
+#!/bin/bash
+
+set -e
+
+dry_run=()
+for arg in "$@"; do
+  case "$arg" in
+    -n|--dry-run) dry_run=(--dry-run) ;;
+    -h|--help)
+      echo "Usage: ${0##*/} [-n|--dry-run]"
+      echo "Expire Home Manager generations older than 30 days, collect garbage, and optimise the store."
+      exit 0
+      ;;
+    *)
+      echo "Unknown option: $arg" >&2
+      exit 2
+      ;;
+  esac
+done
+
+home-manager "${dry_run[@]}" expire-generations '-30 days'
+nix-collect-garbage "${dry_run[@]}"
+if (( ${#dry_run[@]} > 0 )); then
+  echo "Would run: nix store optimise"
+else
+  nix store optimise
+fi
