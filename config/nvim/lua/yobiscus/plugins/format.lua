@@ -12,7 +12,7 @@ return {
 		},
 	},
 	opts = {
-		format_on_save = true,
+		format_on_save = false,
 		formatters_by_ft = {
 			css = { "prettier" },
 			html = { "prettier" },
