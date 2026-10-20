@@ -18,6 +18,7 @@
     ./modules/fonts.nix
     ./modules/git.nix
     ./modules/neovim.nix
+    ./modules/python.nix
     ./modules/rust.nix
     ./modules/terminal
   ]
