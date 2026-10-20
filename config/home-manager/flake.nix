@@ -1,5 +1,5 @@
 {
-  description = "Home Manager configuration of jogravel";
+  description = "Home Manager configuration";
 
   inputs = {
     # Specify the source of Home Manager and Nixpkgs.
@@ -26,10 +26,11 @@
     { nixpkgs, home-manager, pam-shim, gome, ... }:
     let
       system = "x86_64-linux";
+      username = builtins.getEnv "USER";
       pkgs = nixpkgs.legacyPackages.${system};
     in
     {
-      homeConfigurations."jogravel" = home-manager.lib.homeManagerConfiguration {
+      homeConfigurations.${username} = home-manager.lib.homeManagerConfiguration {
         inherit pkgs;
 
         # Specify your home configuration modules here, for example,

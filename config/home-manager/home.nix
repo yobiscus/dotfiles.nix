@@ -1,7 +1,7 @@
 { config, lib, pkgs, ... }:
 
 {
-  home.username = "jogravel";
+  home.username = builtins.getEnv "USER";
   home.homeDirectory = builtins.getEnv "HOME";
   home.stateVersion = "25.05"; # Don't change this, generally.
   programs.home-manager.enable = true;

@@ -36,10 +36,11 @@ Firefox packages, and removes the Firefox snap. There is no separate Linux
 server bootstrap. Review [init.sh](init.sh) before running the full setup on an
 existing system.
 
-The Home Manager flake currently targets `x86_64-linux` and configures the
-`jogravel` account. Adapt `config/home-manager` for another account or
-architecture. `init.sh` does not switch an existing Home Manager profile; after
-setup, use `scripts/home-manager-switch` to apply configuration changes.
+The Home Manager flake targets `x86_64-linux` and reads the account name and
+home directory from `USER` and `HOME`. Its flake evaluation uses these
+environment values, so keep `--impure` when invoking Home Manager. `init.sh`
+does not switch an existing Home Manager profile; after setup, use
+`scripts/home-manager-switch` to apply configuration changes.
 
 ### Dotfiles only
 
