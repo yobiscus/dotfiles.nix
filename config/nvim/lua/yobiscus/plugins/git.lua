@@ -9,7 +9,7 @@ return {
 
 			-- modes
 			vim.keymap.set("n", "<leader>gb", gitsigns.blame, { desc = "Toggle blame" })
-			vim.keymap.set("n", "<leader>gc", gitsigns.show_commit, { desc = "Toggle commit" })
+			vim.keymap.set("n", "<leader>gc", gitsigns.show, { desc = "Toggle commit" })
 			vim.keymap.set("n", "<leader>gq", gitsigns.setqflist, { desc = "Toggle quickfix list (buffer)" })
 			vim.keymap.set("n", "<leader>gv", gitsigns.preview_hunk, { desc = "Toggle hunk preview" })
 			vim.keymap.set("n", "<leader>gx", function()
@@ -32,5 +32,28 @@ return {
 				gitsigns.nav_hunk("prev", { greedy = false })
 			end, { desc = "Prev hunk" })
 		end,
+	},
+	{
+		"sindrets/diffview.nvim",
+		cmd = {
+			"DiffviewOpen",
+			"DiffviewClose",
+			"DiffviewFileHistory",
+		},
+		keys = {
+			{ "<leader>gd", "<cmd>DiffviewOpen<cr>", desc = "Diff uncommitted changes" },
+			{ "<leader>gD", "<cmd>DiffviewOpen --cached<cr>", desc = "Diff staged changes" },
+			{ "<leader>gC", "<cmd>DiffviewOpen HEAD^!<cr>", desc = "Diff latest commit" },
+			{
+				"<leader>gh",
+				function()
+					local count = vim.v.count > 0 and vim.v.count or 50
+					vim.cmd("DiffviewFileHistory -n" .. count .. " --reverse")
+				end,
+				desc = "Review recent commits",
+			},
+			{ "<leader>gH", "<cmd>DiffviewFileHistory %<cr>", desc = "Review current file history" },
+			{ "<leader>gQ", "<cmd>DiffviewClose<cr>", desc = "Close diff view" },
+		},
 	},
 }
