@@ -61,6 +61,12 @@ and switch using the updated inputs. It uses
 `${XDG_CONFIG_HOME:-$HOME/.config}/home-manager`, resolving symlinks to the
 configuration directory.
 
+After an apt NVIDIA driver upgrade, reboot and run `scripts/nixgl-update` as
+your normal user. It checks that the installed graphics libraries match the
+loaded kernel module, reinstalls nixGL with that explicit version, and verifies
+the NVIDIA versions in the wrapper's library paths. A mismatch or Mesa fallback
+fails the check. Start a fresh graphical session after a successful refresh.
+
 ### Dotfiles only
 
 On macOS, non-Ubuntu Linux, or when you only want the config links, run:
