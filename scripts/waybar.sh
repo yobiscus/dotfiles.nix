@@ -6,4 +6,4 @@ if [[ $1 != reload ]]; then
 fi
 
 pkill -fx waybar
-hyprctl dispatch exec waybar >/dev/null
+hyprctl eval 'hl.exec_cmd("waybar")' >/dev/null
