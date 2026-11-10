@@ -7,6 +7,10 @@
     settings.user.name = "Jonathan Gravel";
     settings.init.defaultBranch = "main";
   };
+
+  programs.lazygit = {
+    enable = true;
+  };
 }
 
 
