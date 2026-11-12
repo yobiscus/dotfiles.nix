@@ -17,6 +17,7 @@
     ./modules/devenv.nix
     ./modules/fonts.nix
     ./modules/git.nix
+    ./modules/herdr.nix
     ./modules/neovim.nix
     ./modules/python.nix
     ./modules/rust.nix
