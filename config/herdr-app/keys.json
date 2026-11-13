@@ -107,5 +107,32 @@
     "ctrl-v": "terminal.paste_image",
     "ctrl-insert": "terminal.copy",
     "shift-insert": "terminal.paste"
+  },
+  "layout:focus": {
+    "alt-down": "focus.agent-next",
+    "alt-up": "focus.agent-prev",
+    "ctrl-space ,": "focus.agent-prev",
+    "ctrl-space .": "focus.agent-next",
+    "ctrl-shift-pagedown": "focus.space-next",
+    "ctrl-shift-pageup": "focus.space-prev",
+    "ctrl-shift-n": "focus.new",
+    "ctrl-space shift-n": "focus.new",
+    "ctrl-shift-k": "focus.search",
+    "ctrl-space w": "focus.search",
+    "ctrl-space g": "focus.search",
+    "ctrl-space /": "focus.search-all",
+    "ctrl-space e": "focus.note",
+    "ctrl-space u": "focus.undo",
+    "ctrl-space tab": "focus.panel-next",
+    "ctrl-space shift-tab": "focus.panel-prev",
+    "alt-1": "focus.space1",
+    "alt-2": "focus.space2",
+    "alt-3": "focus.space3",
+    "alt-4": "focus.space4",
+    "alt-5": "focus.space5",
+    "alt-6": "focus.space6",
+    "alt-7": "focus.space7",
+    "alt-8": "focus.space8",
+    "alt-9": "focus.space9"
   }
 }
