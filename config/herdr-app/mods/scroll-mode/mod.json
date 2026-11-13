@@ -1,0 +1,10 @@
+{
+  "place": "none",
+  "title": "Scroll mode",
+  "overlay": {
+    "kind": "popup",
+    "at": "top",
+    "offset": 8,
+    "width": 620
+  }
+}

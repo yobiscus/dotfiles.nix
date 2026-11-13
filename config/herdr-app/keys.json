@@ -74,6 +74,7 @@
     "ctrl-l": "pane.go:right",
     "ctrl-space ,": "agent.prev",
     "ctrl-space .": "agent.next",
+    "ctrl-space [": "mod.open:scroll-mode",
     "ctrl-space v": "pane.split:right",
     "ctrl-space -": "pane.split:down",
     "ctrl-space shift-n": "space.new",
