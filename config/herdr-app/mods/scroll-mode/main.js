@@ -33,11 +33,14 @@ export default class ScrollMode extends View {
   onKey(event, cx) {
     cx.stop_propagation();
     const key = event.keystroke;
-    if (key === "q" || key === "escape") {
+    const terminal = this.terminal;
+    if (key === "q" || key === "escape" || key === "ctrl-c" || key === "enter") {
+      if (terminal && (key === "ctrl-c" || key === "enter")) {
+        run("terminal.scroll", { to: "bottom", terminal });
+      }
       closeOverlay(props().overlay);
       return;
     }
-    const terminal = this.terminal;
     if (!terminal) return;
 
     let scroll = SCROLL[key];
@@ -62,8 +65,8 @@ export default class ScrollMode extends View {
       .text_color(t.foreground)
       .on_key_down((event, cx) => this.onKey(event, cx))
       .child(terminal
-        ? `Scroll ${terminal} · j/k · Ctrl+d/u · gg/G · q/Esc`
-        : "No terminal to scroll · q/Esc exit");
+        ? `Scroll ${terminal} · j/k · Ctrl+d/u · gg/G · Enter/Ctrl+c exit to bottom · q/Esc`
+        : "No terminal to scroll · Enter/Ctrl+c/q/Esc exit");
     for (const direction of ["left", "down", "up", "right"]) {
       element = element.on_action(`pane.go:${direction}`, (_event, cx) => this.navigate(direction, cx));
     }

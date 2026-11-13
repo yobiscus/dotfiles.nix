@@ -130,6 +130,7 @@ The `scroll-mode` mod captures the keyboard while its small popup is open.
 `Ctrl+f`/`Ctrl+b` or PageDown/PageUp scroll a full page. `gg` jumps to the
 oldest available scrollback and `G` to the live output. `q` or Escape closes
 the popup and returns focus to the terminal, preserving the scroll position.
+`Ctrl+c` or Enter jumps to the live output and closes the popup.
 Pane navigation such as `Ctrl+h/j/k/l` and `Alt+h/l` closes scrolling
 mode before moving focus. The original pane keeps its scroll position, and
 the destination receives normal terminal input. Scrolling controls apply

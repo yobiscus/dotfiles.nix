@@ -73,6 +73,18 @@ assert.equal(calls.length, 0);
 assert.equal(closed.length, 0);
 for (const key of ["q", "escape"]) press(mode, key);
 assert.deepEqual(closed, ["mod-scroll-mode", "mod-scroll-mode"]);
+assert.equal(calls.length, 0);
+
+// Exit keys return the original terminal to live output before closing.
+for (const key of ["ctrl-c", "enter"]) {
+  effects.length = 0;
+  press(mode, key);
+  assert.deepEqual(effects, [
+    ["run", "terminal.scroll", { to: "bottom", terminal: "remote/t2" }],
+    ["close", "mod-scroll-mode"],
+  ]);
+  calls.length = 0;
+}
 
 // Plain terminals and missing terminal focus both work without guessing a target.
 const plain = new module.namespace.default();
@@ -85,8 +97,11 @@ const empty = new module.namespace.default();
 empty.init(null, cx);
 press(empty, "k");
 assert.equal(calls.length, 0);
-press(empty, "q");
-assert.equal(closed.length, 3);
+for (const key of ["q", "ctrl-c", "enter"]) {
+  effects.length = 0;
+  press(empty, key);
+  assert.deepEqual(effects, [["close", "mod-scroll-mode"]]);
+}
 
 // Close the popup before navigating so the destination gets real keyboard focus.
 // The only terminal command must be navigation, leaving scroll positions alone.
@@ -100,4 +115,4 @@ for (const direction of ["left", "down", "up", "right"]) {
     ["run", "pane.go", { direction }],
   ]);
 }
-console.log("PASS: scoped scrolling, exit before pane navigation, key consumption, gg, and missing focus");
+console.log("PASS: scoped scrolling, exit to bottom, exit before pane navigation, key consumption, gg, and missing focus");
