@@ -58,9 +58,10 @@ export function reorder(data, ids, target = null, after = false) {
   const moving = new Set(ids);
   const next = copy(data);
   next.undo = [...(data.undo ?? []).slice(-19), { members: Object.fromEntries(ids.map(id => [id, owner(data, id)])), order: data.order }];
+  // Assigning a panel preserves rank. Only a drop onto another row reorders.
+  if (!target || moving.has(target) || !next.order.includes(target)) return next;
   next.order = next.order.filter(id => !moving.has(id));
-  const at = target && !moving.has(target) ? next.order.indexOf(target) : -1;
-  next.order.splice(at < 0 ? next.order.length : at + Number(after), 0, ...ids);
+  next.order.splice(next.order.indexOf(target) + Number(after), 0, ...ids);
   return next;
 }
 

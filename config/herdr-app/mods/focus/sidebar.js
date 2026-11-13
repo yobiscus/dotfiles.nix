@@ -8,7 +8,7 @@ import { SPACE_ROW_HEIGHT, icon, stock, status, label, tool, inputStyle } from "
 const shortPath = path => (path || "Home directory").replace(/^\/(?:home|Users)\/[^/]+/, "~");
 const age = since => `${Math.max(1, Math.floor((Date.now() - since) / 60000))}m`;
 
-function panelButton(view, panel) {
+function panelButton(view, panel, index) {
   const data = view.renderData, t = theme(), id = panel?.id ?? "all";
   const members = panelSpaces(data, view.live.spaces, id);
   const attention = members.reduce((n, s) => n + view.info(s).attention, 0);
@@ -32,9 +32,12 @@ function panelButton(view, panel) {
     .on_mouse_down("right", (_e, cx) => { cx.stop_propagation(); if (panel) view.openPanel(id); })
     .child(icon(panel?.icon ?? "all", 18))
     .when(active, el => el.child(div().absolute().bottom(0).left(12).right(12).h(2).rounded(1).bg(t[panel?.color] ?? t.accent)))
+    .when(view.panelPicking && index < 9, el => el.child(h_flex().id(`focus-panel-number-${id}`).absolute().bottom(-2).right(-2)
+      .size(16).rounded(4).border_1().border_color(t.chrome).items_center().justify_center().text_center()
+      .bg(t.foreground).text_color(t.background).font_family("DejaVu Sans").text_size(11).line_height("12px").font_bold().child(String(index + 1))))
     .when(attention > 0, el => el.child(h_flex().id(`focus-panel-alert-${id}`).absolute().top(-2).right(-2)
-      .min_w(12).h(12).px(2).rounded(6).bg(blocked ? t.blocked : t.done).text_color(t.background)
-      .text_size(8).font_semibold().items_center().justify_center().cursor_pointer()
+      .min_w(16).h(16).px(3).rounded(8).border_1().border_color(t.chrome).bg(blocked ? t.blocked : t.done).text_color(t.background)
+      .font_family("DejaVu Sans").text_size(11).line_height("12px").font_bold().items_center().justify_center().text_center().cursor_pointer()
       .on_mouse_down("left", (_e, cx) => cx.stop_propagation())
       .on_click((_e, cx) => {
         cx.stop_propagation(); view.selectPanel(id, cx);
@@ -161,10 +164,10 @@ export function renderSidebar(view) {
     .on_mouse_down_out((_e, cx) => { if (view.drag) { view.cancelDrag(); cx.notify(); } })
     .on_mouse_up("left", (_e, cx) => { if (view.drag) { view.cancelDrag(); cx.notify(); } })
     .child(h_flex().id("focus-panels").h(compact ? 40 : 50).flex_none().px(compact ? 3 : 10).gap(4).items_center()
-      .when(compact, el => el.overflow_x_scrollbar()).child(panelButton(view, null))
+      .when(compact, el => el.overflow_x_scrollbar()).child(panelButton(view, null, 0))
       .when(!compact, el => el.child(div().w(1).h(18).mx(3).bg(t.border)))
       .child(h_flex().id("focus-panel-scroll").flex_1().min_w(0).h(42).gap(3).items_center().overflow_x_scrollbar()
-        .children(data.panels.map(p => panelButton(view, p))))
+        .children(data.panels.map((p, index) => panelButton(view, p, index + 1))))
       .when(!compact, el => el.child(tool("focus-panel-create", stock("plus"), "Create a panel", () => view.openPanel()))))
     .when(!compact, el => el.child(h_flex().h(32).px(12).gap(5).items_center()
       .child(div().flex_1().min_w(0).truncate().text_size(13).font_semibold().child(view.preview ? `${named?.name} · drop to move` : named?.name ?? "All spaces"))

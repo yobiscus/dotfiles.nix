@@ -22,7 +22,9 @@ async function setup() {
     { address: "t3", space: "c", pane: "p3", status: "done", title: "CLI results" },
   ], terminals: [] };
   const cx = {
-    notify() {}, stop_propagation() {}, focus_handle: () => ({ focus() {} }),
+    notify() {}, stop_propagation() {}, focus_handle: () => ({
+      focused: false, focus() { this.focused = true; }, is_focused() { return this.focused; },
+    }),
     timer: { every() {}, after(ms, fn) { env.timers.push(fn); } }, spawn() {},
     write_to_clipboard(text) { env.clipboard = text; },
   };
@@ -115,7 +117,9 @@ test("All is a view; every space has exactly one real owner, including offline s
 test("bulk moves and Undo preserve notes and hosts; All reordering preserves ownership", async () => {
   const { model: m, env } = await setup();
   let data = m.normalize(null, env.sp); data.notes.a = "Waiting for review";
+  const order = plain(data.order);
   data = m.move(data, ["a", "remote/a"], "parked");
+  assert.deepEqual(plain(data.order), order);
   assert.equal(data.members.a, "parked"); assert.equal(data.members["remote/a"], "parked");
   data.notes.a = "A newer note";
   const restored = m.undoMove(data);
@@ -140,12 +144,14 @@ test("space rows expose status and metadata with machine groups and no Agents se
 
 test("dragging multiple spaces to an icon changes membership, including cross-host selections", async () => {
   const { view, env, fire, event } = await setup();
+  const order = plain(view.data.order);
   view.selected = new Set(["a", "remote/a"]);
   fire("focus-space-all-a", "on_mouse_down:left", event(60, 160));
   fire("focus-panel-parked", "on_mouse_move", event(210, 70));
   fire("focus-panel-parked", "on_mouse_up:left", event(210, 70));
   assert.equal(env.data["focus.workspace.v1"].members.a, "parked");
   assert.equal(env.data["focus.workspace.v1"].members["remote/a"], "parked");
+  assert.deepEqual(plain(view.data.order), order);
   assert.ok(!env.calls.some(([name]) => /close|kill|move/.test(name)));
   view.selected.clear();
   fire("focus-space-all-a", "on_mouse_down:left", event(60, 160));
@@ -169,18 +175,64 @@ test("All rejects assignment; leaving the sidebar cancels hover previews", async
   assert.equal(view.data.members.a, "work");
 });
 
-test("keyboard agent and space navigation stays within the active panel", async () => {
+test("space navigation crosses machine sections, wraps, and stays inside the active panel", async () => {
   const { view, env, model: m, cx } = await setup();
+  view.command("space-next", cx);
+  assert.equal(env.sp.find(s => s.active).id, "c");
+  view.updateView({ folded: { remote: true } });
+  view.command("space-next", cx);
+  assert.equal(env.sp.find(s => s.active).id, "remote/a");
+  assert.equal(view.data.views.all.folded.remote, false);
+  view.command("space-next", cx);
+  assert.equal(env.sp.find(s => s.active).id, "a");
+  view.command("space-prev", cx);
+  assert.equal(env.sp.find(s => s.active).id, "remote/a");
   view.commit(m.move(view.data, ["remote/a"], "research"));
   view.selectPanel("work", cx); view.render(cx); env.calls.length = 0;
-  view.command("agent-next", cx);
-  assert.deepEqual(env.calls.at(-1), ["pane.focus", { terminal: "t3" }]);
+  view.command("space-prev", cx);
+  assert.deepEqual(env.calls.at(-1), ["space.select", { id: "c" }]);
   view.command("space1", cx);
   assert.deepEqual(env.calls.at(-1), ["space.select", { id: "a" }]);
-  assert.ok(!env.calls.some(([, args]) => args.terminal === "remote/t1"));
-  env.focused = "plain-shell";
-  view.command("agent-prev", cx);
-  assert.deepEqual(env.calls.at(-1), ["pane.focus", { terminal: "t3" }]);
+  view.command("space-next", cx);
+  assert.deepEqual(env.calls.at(-1), ["space.select", { id: "c" }]);
+  assert.ok(!env.calls.some(([, args]) => args.id === "remote/a"));
+});
+
+test("panel picking numbers All first and follows icon order, including empty panels", async () => {
+  const { view, env, cx, find, fire } = await setup();
+  assert.equal(find("focus-panel-number-all"), null);
+  const data = view.data;
+  data.panels.unshift(data.panels.pop());
+  view.commit(data);
+  view.command("panel-pick", cx);
+  assert.ok(find("focus-panel-number-all").node.children.includes("1"));
+  assert.ok(find("focus-panel-number-parked").node.children.includes("2"));
+  assert.ok(find("focus-panel-alert-all"));
+  fire("focus-sidebar", "on_key_down", { key: "2", keystroke: "2" });
+  assert.equal(view.data.active, "parked");
+  assert.equal(view.content, "focus-empty");
+  assert.equal(find("focus-panel-number-all"), null);
+  view.command("panel-pick", cx);
+  fire("focus-sidebar", "on_key_down", { key: "1", keystroke: "1" });
+  assert.equal(view.data.active, "all");
+  assert.equal(view.content, "focus-terminal");
+  assert.ok(!env.calls.some(([name]) => name === "terminal.send"));
+});
+
+test("Escape and focus loss dismiss panel numbers without clearing search or bulk selection", async () => {
+  const { view, cx, find, fire } = await setup();
+  view.query = "review"; view.updateView({ query: "review" });
+  view.selected = new Set(["a", "c"]);
+  view.command("panel-pick", cx);
+  fire("focus-sidebar", "on_key_down", { key: "9", keystroke: "9" });
+  assert.ok(find("focus-panel-number-all"));
+  fire("focus-sidebar", "on_key_down", { key: "escape", keystroke: "escape" });
+  assert.equal(find("focus-panel-number-all"), null);
+  assert.equal(view.query, "review");
+  assert.deepEqual([...view.selected], ["a", "c"]);
+  view.command("panel-pick", cx);
+  view.handle.focused = false;
+  assert.equal(find("focus-panel-number-all"), null);
 });
 
 test("native navigation replaces mouse selection without clearing deliberate bulk selection on redraw", async () => {
@@ -210,8 +262,10 @@ test("move destinations match existing panels and omit an already shared owner",
   view.commit(data);
   env.props = { mode: "space-menu", space: "a", ids: ["a"] };
   assert.ok(find("move-research"));
+  const order = plain(view.data.order);
   for (const id of ["work", "all", "priority", "blocked", "parked"]) assert.equal(find(`move-${id}`), null);
   fire("move-research", "on_click");
+  assert.deepEqual(plain(view.data.order), order);
   assert.equal(view.data.members.a, "research");
   env.props.ids = ["a", "c"];
   assert.ok(find("move-work")); assert.ok(find("move-research"));

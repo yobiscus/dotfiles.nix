@@ -1,6 +1,6 @@
 import { View, div } from "gpui-kit";
 import { v_flex, InputState } from "gpui-base";
-import { spaces, panes, agents, terminals, focused, machines, shared, setShared, run, props, theme, openOverlay, nextCommand, window } from "herdr";
+import { spaces, panes, agents, terminals, machines, shared, setShared, run, props, theme, openOverlay, nextCommand, window } from "herdr";
 import { KEY, normalize, owner, panelSpaces, viewOf, foldKey, move, reorder, undoMove, creation, summary, RANK } from "./model.js";
 import GitMetadata, { location } from "./git.js";
 import { initDialog, renderDialog } from "./dialogs.js";
@@ -18,6 +18,7 @@ export default class Focus extends View {
     this.drag = null;
     this.over = null;
     this.preview = null;
+    this.panelPicking = false;
     this.searching = false;
     this.query = "";
     this.searchAll = false;
@@ -88,6 +89,7 @@ export default class Focus extends View {
   }
 
   sync() {
+    if (this.panelPicking && !this.handle.is_focused()) this.panelPicking = false;
     const sp = spaces(), raw = shared(KEY), data = normalize(raw, sp);
     let changed = !raw || data.active !== raw.active || data.defaultPanel !== raw.defaultPanel
       || data.order.length !== raw.order?.length || sp.some(s => data.members[s.id] !== raw.members?.[s.id]);
@@ -142,6 +144,7 @@ export default class Focus extends View {
   selectPanel(id, cx) {
     const data = this.data;
     if (id !== "all" && !data.panels.some(p => p.id === id)) return;
+    this.panelPicking = false;
     this.cancelDrag();
     data.active = id;
     this.commit(data);
@@ -158,6 +161,7 @@ export default class Focus extends View {
   selectSpace(id, fromSearch = false, reveal = true) {
     const space = spaces().find(s => s.id === id);
     if (!space) return;
+    this.panelPicking = false;
     const data = this.data;
     if (fromSearch && data.active !== "all") data.active = owner(data, id);
     const old = viewOf(data);
@@ -216,12 +220,17 @@ export default class Focus extends View {
 
   command(command, cx) {
     if (command === "focus") { this.handle.focus(); return; }
+    this.panelPicking = command === "panel-pick";
     if (command === "new") this.newSpace();
     else if (command === "note") this.openNote();
     else if (command === "search") this.focusSearch(false, cx);
     else if (command === "search-all") this.focusSearch(true, cx);
     else if (command === "undo") this.commit(undoMove(this.data));
-    else if (command.startsWith("panel-")) {
+    else if (command === "panel-pick") {
+      this.cancelDrag();
+      run("layout.show", { id: "sidebar" });
+      this.handle.focus();
+    } else if (command.startsWith("panel-")) {
       const ids = ["all", ...this.data.panels.map(p => p.id)];
       const delta = command.endsWith("prev") ? -1 : 1;
       this.selectPanel(ids[(ids.indexOf(this.data.active) + delta + ids.length) % ids.length], cx);
@@ -232,18 +241,6 @@ export default class Focus extends View {
         : current < 0 ? command.endsWith("prev") ? list.length - 1 : 0
           : (current + (command.endsWith("prev") ? -1 : 1) + list.length) % list.length;
       if (list[at]) this.selectSpace(list[at].id);
-    } else if (command.startsWith("agent-")) {
-      const list = panelSpaces(this.data, spaces()).flatMap(s => this.info(s).list);
-      if (!list.length) return;
-      const target = focused(), at = list.findIndex(a => a.address === (target?.shown ?? target?.terminal));
-      const index = at < 0 ? command.endsWith("prev") ? list.length - 1 : 0
-        : (at + (command.endsWith("prev") ? -1 : 1) + list.length) % list.length;
-      const next = list[index];
-      if (next) {
-        const space = spaces().find(s => this.info(s).list.some(a => a.address === next.address));
-        if (space) this.selectSpace(space.id);
-        run(next.pane ? "pane.focus" : "terminal.peek", { terminal: next.address });
-      }
     }
   }
 
@@ -296,6 +293,20 @@ export default class Focus extends View {
   cancelDrag() { this.drag = null; this.over = null; this.preview = null; }
 
   onKey(e, cx) {
+    if (this.panelPicking) {
+      cx.stop_propagation();
+      const key = e.keystroke ?? e.key;
+      if (/^[1-9]$/.test(key)) {
+        const id = ["all", ...this.data.panels.map(p => p.id)][Number(key) - 1];
+        if (id) this.selectPanel(id, cx);
+      } else {
+        this.panelPicking = false;
+        const active = this.current();
+        if (active?.active) run("space.select", { id: active.id });
+      }
+      cx.notify();
+      return;
+    }
     if (e.key === "escape") {
       if (this.drag) { this.cancelDrag(); cx.stop_propagation(); cx.notify(); return; }
       this.cancelDrag(); this.selected.clear(); this.query = ""; this.input.set_value(""); this.searching = false;

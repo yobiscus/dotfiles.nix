@@ -16,10 +16,11 @@ spaces initially belong to Work.
 
 Drag one or more spaces onto a panel icon to reassign them. Pause over an
 icon to preview its list; Escape or leaving the sidebar cancels the drag.
-Ctrl-click toggles selection and Shift-click selects a range. Dropping onto
-a row reorders within that machine. All cannot own spaces; reordering its
-rows preserves their original panel assignments. Undo restores the last
-move without reverting note edits.
+Ctrl-click toggles selection and Shift-click selects a range. Assigning a
+panel preserves the space's position in All. Dropping onto another row
+reorders within that machine; all panels share this saved order. All cannot
+own spaces; reordering its rows preserves their panel assignments. Undo
+restores the last move without reverting note edits.
 
 Each panel keeps its machine sections, selected space, search settings, and
 scroll position. Icon badges report input requests and unseen results from
@@ -47,12 +48,21 @@ index. Failed queries retain the last known values and mark them stale.
 | Keys in Focus | Action |
 | --- | --- |
 | `Alt+1..9` | Select a space within this panel |
+| `Alt+Up/Down` or `Alt+K/J` | Previous / next space, across machine sections |
+| `Ctrl+Space`, then `t`, then `1..9` | Select a panel; 1 is All |
 | `Ctrl+Space`, then Tab / Shift+Tab | Next / previous panel |
 | `Ctrl+Space`, then `w` or `g` | Search this panel |
 | `Ctrl+Space`, then `/` | Search all panels |
 | `Ctrl+Space`, then `e` | Edit the selected space's note |
 | `Ctrl+Space`, then `u` | Undo the last move |
-| `Alt+Down/Up` or `Ctrl+Space`, then `.` / `,` | Next / previous agent in this panel |
+
+After `Ctrl+Space`, `t`, numbers appear at the bottom right of the first
+nine panel icons in their current order. Attention counts stay visible at
+the top right. Choose a number or press Escape to cancel. Space
+navigation follows the saved order inside each machine section, crosses to the
+next section, and wraps at either end of the active panel's list. Local
+spaces come first, followed by remote machines alphabetically. A folded
+section opens when navigation selects one of its spaces.
 
 Search matches names, paths, branches, notes, machine names, and agent
 titles. Use Here/All beside the field to change its scope. Selecting a
@@ -93,7 +103,7 @@ effective keymap, including inherited defaults and personal overrides.
 | `Alt+1..9` | Select a space, already the app default |
 | `Alt+Shift+1..9` | Select a tab |
 | `Ctrl+h/j/k/l` | Focus the pane to the left/down/up/right |
-| `Ctrl+Space`, then `,` or `.` | Previous or next agent |
+| `Alt+Up/Down` or `Alt+K/J` | Previous or next space |
 | `Ctrl+Space`, then `[` | Scroll mode |
 | `Ctrl+Space`, then `v` or `-` | Split right or down |
 | `Ctrl+Space`, then `Shift+n` | New workspace |
@@ -115,7 +125,7 @@ The `scroll-mode` mod captures the keyboard while its small popup is open.
 `Ctrl+f`/`Ctrl+b` or PageDown/PageUp scroll a full page. `gg` jumps to the
 oldest available scrollback and `G` to the live output. `q` or Escape closes
 the popup and returns focus to the terminal, preserving the scroll position.
-Pane navigation such as `Ctrl+h/j/k/l` and `Alt+h/j/k/l` closes scrolling
+Pane navigation such as `Ctrl+h/j/k/l` and `Alt+h/l` closes scrolling
 mode before moving focus. The original pane keeps its scroll position, and
 the destination receives normal terminal input. Scrolling controls apply
 only to the terminal where the mode opened.
