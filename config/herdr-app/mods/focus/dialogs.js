@@ -1,6 +1,6 @@
 import { div } from "gpui-kit";
 import { h_flex, v_flex, InputState, Input, TextareaState, Textarea } from "gpui-base";
-import { shared, setShared, spaces, props, closeOverlay, openOverlay, run, theme, agents, terminals } from "herdr";
+import { shared, setShared, spaces, machines, props, closeOverlay, openOverlay, run, theme, agents, terminals } from "herdr";
 import { KEY, ICONS, COLORS, normalize, owner, move, removePanel, summary, LABEL, RANK } from "./model.js";
 import { icon, stock, label, button, status, inputStyle } from "./ui.js";
 
@@ -12,7 +12,10 @@ export function initDialog(view, cx) {
   const p = props(), data = read();
   view.handle = cx.focus_handle();
   view.error = "";
-  if (p.mode === "note") {
+  if (p.mode === "new-space") {
+    view.machineIndex = 0;
+    view.handle.focus();
+  } else if (p.mode === "note") {
     view.text = TextareaState.new({ value: data.notes[p.space] ?? "", placeholder: "What should you remember when you return?", rows: 7 });
     view.text.on("change", (_e, cx) => cx.notify());
     view.text.on("submit", (_e, cx) => { submit(view); cx.notify(); });
@@ -48,15 +51,41 @@ function submit(view) {
   save(data); close();
 }
 
-function menuRow(id, text, action, glyph = null) {
+function menuRow(id, text, action, glyph = null, enabled = true, selected = false) {
   const t = theme();
   return h_flex().id(id).h(26).flex_none().px(6).gap(6).rounded(5).items_center().text_size(12)
-    .text_color(t.foreground).cursor_pointer().hover(el => el.bg(t.hover)).on_click(action)
+    .text_color(enabled ? t.foreground : t.dim).bg(selected ? t.selected : "#00000000")
+    .when(enabled, el => el.cursor_pointer().hover(el => el.bg(t.hover)))
+    .on_click((e, cx) => { if (enabled) action(e, cx); })
     .when(glyph, el => el.child(glyph)).child(div().flex_1().truncate().child(text));
 }
 
 export function renderDialog(view) {
   const p = props(), t = theme(), data = read();
+  if (p.mode === "new-space") {
+    const choices = machines().slice().sort((a, b) => (a.name ?? "").localeCompare(b.name ?? ""));
+    const ready = choices.filter(m => m.layout === "ready");
+    view.machineIndex = Math.min(view.machineIndex, Math.max(0, ready.length - 1));
+    const choose = machine => {
+      if (!machine || machine.layout !== "ready") return;
+      close(); run(`focus.new:${machine.name ?? ""}`);
+    };
+    return v_flex().id("focus-new-space-menu").w_full().h(Math.min(320, 38 + choices.length * 28)).min_h(0)
+      .p(4).gap(1).bg(t.popover).track_focus(view.handle)
+      .on_key_down((e, cx) => {
+        if (e.key === "escape") { close(); cx.stop_propagation(); }
+        else if (e.key === "enter") { choose(ready[view.machineIndex]); cx.stop_propagation(); }
+        else if (e.key === "down" || e.key === "up") {
+          view.machineIndex = (view.machineIndex + (e.key === "down" ? 1 : -1) + ready.length) % (ready.length || 1);
+          cx.stop_propagation(); cx.notify();
+        }
+      })
+      .child(div().px(6).py(4).text_size(10.5).text_color(t.dim).child("New space on"))
+      .child(v_flex().flex_1().min_h(0).overflow_y_scrollbar().children(choices.map(machine =>
+        menuRow(`new-space-${machine.name ?? ""}`, machine.name ?? "This computer", () => choose(machine),
+          stock(machine.name ? "server" : "monitor", 12), machine.layout === "ready", ready[view.machineIndex] === machine)
+          .when(machine.layout !== "ready", el => el.child(label(machine.layout))))));
+  }
   const title = text => h_flex().w_full().items_center().justify_between()
     .child(div().text_size(17).font_semibold().child(text)).child(label("Esc to cancel"));
   const frame = () => v_flex().id(`focus-dialog-${p.mode}`).track_focus(view.handle).w_full().p(20).gap(14).min_h(0)

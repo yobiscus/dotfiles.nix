@@ -20,7 +20,7 @@ async function setup() {
     { address: "t1", space: "a", pane: "p1", status: "blocked", title: "Needs approval" },
     { address: "remote/t1", space: "remote/a", pane: "remote/p1", status: "working", title: "Compare results" },
     { address: "t3", space: "c", pane: "p3", status: "done", title: "CLI results" },
-  ], terminals: [] };
+  ], terminals: [], machines: [{ name: null, layout: "ready" }, { name: "remote", layout: "ready" }] };
   const cx = {
     notify() {}, stop_propagation() {}, focus_handle: () => ({
       focused: false, focus() { this.focused = true; }, is_focused() { return this.focused; },
@@ -59,7 +59,7 @@ async function setup() {
       shared: key => env.data[key], setShared: (key, value) => { env.data[key] = value; },
       spaces: () => env.sp, agents: () => env.agents, terminals: () => env.terminals, panes: () => [],
       focused: () => ({ terminal: env.focused }), props: () => env.props,
-      machines: () => [{ name: null, layout: "ready" }, { name: "remote", layout: "ready" }],
+      machines: () => env.machines,
       theme: () => new Proxy({}, { get: (_, key) => `#${String(key)}` }), window: () => ({ active: true }),
       run(name, args) {
         env.calls.push([name, plain(args ?? {})]);
@@ -290,6 +290,89 @@ test("new spaces inherit the panel and active machine, including creation in All
   view.render(cx); assert.equal(view.data.members["remote/new"], "research");
   view.selectPanel("all", cx);
   assert.equal(m.creation(view.data, env.sp[1]).panel, "research");
+});
+
+test("closing the last space retains its machine and a working creation button in All", async () => {
+  const { view, env, find, fire, cx } = await setup();
+  view.commit({ ...view.data, defaultPanel: "priority" });
+  view.commit({ ...view.data, members: { ...view.data.members, a: "research" } });
+  env.sp = env.sp.filter(s => s.machine !== "remote");
+  assert.ok(find("focus-machine-all-remote-remote"));
+  assert.equal(find("focus-machine-work-remote-remote"), null);
+  fire("focus-machine-new-remote", "on_click");
+  assert.deepEqual(env.calls.at(-1), ["space.new", { machine: "remote" }]);
+  assert.equal(view.pendingCreations.at(-1).panel, "research");
+  env.sp = []; env.agents = [];
+  assert.ok(find("focus-machine-all-local"));
+  assert.ok(find("focus-machine-all-remote-remote"));
+  assert.equal(find("focus-list-empty"), null);
+  fire("focus-machine-new-remote", "on_click");
+  assert.equal(view.pendingCreations.at(-1).panel, "priority");
+  view.selectPanel("work", cx);
+  assert.equal(find("focus-machine-work-remote-remote"), null);
+  assert.ok(find("focus-list-empty"));
+  view.selectPanel("all", cx); view.query = "missing";
+  assert.equal(find("focus-machine-all-remote-remote"), null);
+  assert.ok(find("focus-list-empty"));
+});
+
+test("the split button chooses an empty machine without losing the named panel", async () => {
+  const { view, env, View, cx, fire, find } = await setup();
+  env.sp = env.sp.filter(s => s.machine !== "remote");
+  view.selectPanel("research", cx);
+  fire("focus-space-new", "on_click");
+  assert.deepEqual(env.calls.at(-1), ["space.new", { machine: "" }]);
+  fire("focus-space-new-machine", "on_click");
+  assert.equal(env.overlays.at(-1).props.mode, "new-space");
+  env.props = { ...env.overlays.at(-1).props, overlay: "new" };
+  const menu = new View(); menu.init({}, cx);
+  find("new-space-remote", menu.render(cx)).node.handlers.on_click({}, cx);
+  assert.deepEqual(env.calls.at(-1), ["focus.new:remote", {}]);
+  env.props = {};
+  view.command(env.calls.at(-1)[0].slice("focus.".length), cx);
+  assert.deepEqual(env.calls.at(-1), ["space.new", { machine: "remote" }]);
+  assert.equal(view.pendingCreations.at(-1).panel, "research");
+  for (const s of env.sp) s.active = false;
+  env.sp.push({ id: "remote/new", name: "New", machine: "remote", tabs: [], active: true });
+  view.render(cx);
+  assert.equal(view.data.members["remote/new"], "research");
+  view.newSpace("");
+  assert.deepEqual(env.calls.at(-1), ["space.new", { machine: "" }]);
+});
+
+test("machine selection disables unavailable hosts, skips them by keyboard, and rechecks readiness", async () => {
+  const { view, env, View, cx, find } = await setup();
+  env.machines.splice(1, 0, { name: "loading", layout: "loading" }, { name: "offline", layout: "unavailable" });
+  env.props = { mode: "new-space", overlay: "new" };
+  const menu = new View(); menu.init({}, cx);
+  const before = env.calls.length;
+  for (const name of ["loading", "offline"]) find(`new-space-${name}`, menu.render(cx)).node.handlers.on_click({}, cx);
+  assert.equal(env.calls.length, before);
+  find("focus-new-space-menu", menu.render(cx)).node.handlers.on_key_down({ key: "down" }, cx);
+  find("focus-new-space-menu", menu.render(cx)).node.handlers.on_key_down({ key: "enter" }, cx);
+  assert.deepEqual(env.calls.at(-1), ["focus.new:remote", {}]);
+  env.props = {}; env.machines.find(m => m.name === "remote").layout = "unavailable";
+  view.render(cx);
+  const pending = view.pendingCreations.length, calls = env.calls.length;
+  view.command("new:remote", cx); view.newSpace("loading"); view.newSpace("unknown");
+  find("focus-machine-new-offline").node.handlers.on_click({}, cx);
+  assert.equal(view.pendingCreations.length, pending);
+  assert.equal(env.calls.length, calls);
+  env.machines = env.machines.map(m => ({ ...m, layout: "unavailable" }));
+  env.props = { mode: "new-space", overlay: "new" };
+  for (const key of ["down", "enter"]) find("focus-new-space-menu", menu.render(cx)).node.handlers.on_key_down({ key }, cx);
+  assert.equal(env.calls.length, calls);
+});
+
+test("machine selection is available in the compact sidebar and empty content", async () => {
+  const { view, env, View, cx, fire, find } = await setup();
+  view.width = 44;
+  fire("focus-space-new-machine", "on_click");
+  assert.equal(env.overlays.at(-1).props.mode, "new-space");
+  env.props = { mode: "empty" };
+  const empty = new View(); empty.init({}, cx);
+  find("empty-new-machine", empty.render(cx)).node.handlers.on_click({}, cx);
+  assert.deepEqual(env.calls.at(-1), ["focus.new-menu", {}]);
 });
 
 test("scoped/global search includes notes and selecting a global result reveals its owner", async () => {

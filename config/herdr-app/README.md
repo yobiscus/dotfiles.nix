@@ -40,6 +40,11 @@ assigns that panel; creation in All inherits the active space's owner, or
 uses the default when nothing is active. Spaces discovered after a remote
 reconnect receive the default if they have no saved assignment.
 
+The arrow beside New space lets you choose any machine, including one with
+no spaces. Loading and unavailable machines are listed but disabled. All
+keeps empty machine sections with a `+` button on each header; named panels
+show only machines with matching spaces. Searching hides empty sections.
+
 Git follows the space's first terminal's current folder, falling back to
 the space's configured folder. `↑`/`↓` compare against the locally known
 upstream, and `Δ` counts changed files. Queries do not fetch or change the

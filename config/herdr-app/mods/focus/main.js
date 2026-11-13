@@ -1,11 +1,11 @@
 import { View, div } from "gpui-kit";
-import { v_flex, InputState } from "gpui-base";
+import { h_flex, v_flex, InputState } from "gpui-base";
 import { spaces, panes, agents, terminals, machines, shared, setShared, run, props, theme, openOverlay, nextCommand, window } from "herdr";
 import { KEY, normalize, owner, panelSpaces, viewOf, foldKey, move, reorder, undoMove, creation, summary, RANK } from "./model.js";
 import GitMetadata, { location } from "./git.js";
 import { initDialog, renderDialog } from "./dialogs.js";
 import { renderSidebar } from "./sidebar.js";
-import { SPACE_ROW_HEIGHT, button, icon } from "./ui.js";
+import { SPACE_ROW_HEIGHT, button, icon, stock } from "./ui.js";
 
 export default class Focus extends View {
   init(_props, cx) {
@@ -175,11 +175,20 @@ export default class Focus extends View {
     run("space.select", { id });
   }
 
-  newSpace() {
+  newSpace(machine) {
     const data = this.data, active = spaces().find(s => s.active);
     const destination = creation(data, active);
+    if (machine !== undefined) {
+      destination.machine = machine ?? "";
+      if (!machines().some(m => (m.name ?? "") === destination.machine && m.layout === "ready")) return;
+    }
     this.pendingCreations.push({ ...destination, before: new Set(spaces().map(s => s.id)), at: Date.now() });
     run("space.new", { machine: destination.machine });
+  }
+
+  openNewSpaceMenu() {
+    openOverlay({ mod: "focus", kind: "popup", width: 260, height: Math.min(320, 38 + machines().length * 28),
+      props: { mode: "new-space" } });
   }
 
   openPanel(id) {
@@ -222,6 +231,8 @@ export default class Focus extends View {
     if (command === "focus") { this.handle.focus(); return; }
     this.panelPicking = command === "panel-pick";
     if (command === "new") this.newSpace();
+    else if (command.startsWith("new:")) this.newSpace(command.slice(4));
+    else if (command === "new-menu") this.openNewSpaceMenu();
     else if (command === "note") this.openNote();
     else if (command === "search") this.focusSearch(false, cx);
     else if (command === "search-all") this.focusSearch(true, cx);
@@ -323,7 +334,10 @@ export default class Focus extends View {
         .child(icon(panel?.icon ?? "all", 30).text_color(t[panel?.color] ?? t.dim))
         .child(div().text_size(20).font_semibold().text_color(t.foreground).child(panel?.name ?? "All spaces"))
         .child(div().text_size(13).child("Create a space here, or drag one onto this panel's icon."))
-        .child(button("empty-new-space", "New space", () => run("focus.new"), true));
+        .child(h_flex().gap(2)
+          .child(button("empty-new-space", "New space", () => run("focus.new"), true))
+          .child(button("empty-new-machine", stock("chevron-down", 12), () => run("focus.new-menu"), true)
+            .tooltip("Choose a machine for the new space")));
     }
     if (props()?.mode) return renderDialog(this);
     this.live = { spaces: spaces(), panes: panes(), machines: machines() };

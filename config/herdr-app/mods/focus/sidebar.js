@@ -107,8 +107,21 @@ function machineRow(view, name, members, compact, panel) {
     .when(!compact, el => el.child(div().flex_1().truncate().child(name ?? "This computer"))
       .when(machine?.layout && machine.layout !== "ready", el => el.child(label(machine.layout)))
       .child(div().text_size(10).child(String(members.length)))
-      .when(folded && attention, el => el.child(div().text_color(t.blocked).child(`● ${attention}`)))
-      .child(stock(`chevron-${folded ? "right" : "down"}`, 10)));
+      .when(folded && attention, el => el.child(div().text_color(t.blocked).child(`● ${attention}`))))
+    .when(panel === "all", el => el.child(tool(`focus-machine-new-${foldKey(name)}`, stock("plus", 11),
+      machine?.layout === "ready" ? `New space on ${name ?? "this computer"}` : `${name ?? "This computer"} · ${machine?.layout ?? "unavailable"}`,
+      () => view.newSpace(name)).size(18).when(machine?.layout !== "ready", el => el.cursor_default().opacity(0.35))))
+    .when(!compact, el => el.child(stock(`chevron-${folded ? "right" : "down"}`, 10)));
+}
+
+function newSpaceControls(view, compact) {
+  const t = theme();
+  return h_flex().flex_none().items_center().rounded(6).border_1().border_color(t.border)
+    .child(tool("focus-space-new", stock("plus"), `New space on ${spaces().find(s => s.active)?.machine ?? "this computer"}`,
+      () => view.newSpace()).when(compact, el => el.w(22)))
+    .child(div().w(1).h(14).bg(t.border))
+    .child(tool("focus-space-new-machine", stock("chevron-down", 10), "Choose a machine for the new space",
+      () => view.openNewSpaceMenu()).w(compact ? 16 : 18));
 }
 
 function details(view) {
@@ -147,7 +160,10 @@ export function renderSidebar(view) {
   const lists = ["all", ...data.panels.map(p => p.id)].map(id => {
     const active = id === panel, saved = viewOf(data, id), folded = saved.folded ?? {};
     const members = active ? visible : view.visible(id, saved.query ?? "", saved.searchAll ?? false);
-    const hosts = [...new Set(members.map(s => s.machine ?? null))].sort((a, b) => a === null ? -1 : b === null ? 1 : a.localeCompare(b));
+    const query = active ? (view.preview ? "" : view.query) : saved.query ?? "";
+    const hosts = [...new Set([...members.map(s => s.machine ?? null),
+      ...(id === "all" && !query ? view.live.machines.map(m => m.name) : [])])]
+      .sort((a, b) => a === null ? -1 : b === null ? 1 : a.localeCompare(b));
     const elements = hosts.flatMap(name => {
       const mine = members.filter(s => (s.machine ?? null) === name);
       return [machineRow(view, name, mine, compact, id), ...(!folded[foldKey(name)] ? mine.map(s => spaceRow(view, s, compact, id)) : [])];
@@ -174,7 +190,8 @@ export function renderSidebar(view) {
       .child(label(view.query && !view.preview ? `${visible.length}/${panelSpaces(data, view.live.spaces, view.searchAll ? "all" : panel).length}` : String(visible.length)))
       .when(data.undo?.length, el => el.child(tool("focus-undo", icon("undo", 13), "Undo last move", (_e, cx) => view.command("undo", cx))))
       .child(tool("focus-search", stock("search"), "Search this panel", (_e, cx) => view.focusSearch(undefined, cx)))
-      .child(tool("focus-space-new", stock("plus"), `New space on ${spaces().find(s => s.active)?.machine ?? "this computer"}`, () => view.newSpace()))))
+      .child(newSpaceControls(view, false))))
+    .when(compact, el => el.child(h_flex().h(32).flex_none().justify_center().items_center().child(newSpaceControls(view, true))))
     .when(!compact && !view.preview && (view.searching || view.query), el => el.child(h_flex().px(12).pb(8).gap(5).items_center()
       .child(inputStyle(Input.new(view.input), 31).flex_1().min_w(0))
       .child(div().id("focus-search-scope").px(8).py(6).rounded(6).text_size(10).text_color(view.searchAll ? t.accent : t.dim)
@@ -185,7 +202,7 @@ export function renderSidebar(view) {
       .child(div().flex_1().child(`${view.selected.size} spaces selected · drag onto a panel`))
       .child(div().id("focus-selection-clear").cursor_pointer().on_click((_e, cx) => { view.selected.clear(); cx.notify(); }).child("Clear"))))
     .child(v_flex().id("focus-lists").flex_1().min_h(0).w_full().relative().children(lists)
-      .when(!visible.length, el => el.child(v_flex().absolute().inset_0().items_center().justify_center().gap(9).px(18)
+      .when(!visible.length && (panel !== "all" || !!view.query || !view.live.machines.length), el => el.child(v_flex().id("focus-list-empty").absolute().inset_0().items_center().justify_center().gap(9).px(18)
       .child(icon(view.query ? "search" : named?.icon ?? "all", 24).text_color(t.dim))
       .when(!compact, el => el.child(div().text_size(12).text_color(t.muted).child(view.query ? "No matching spaces" : "A little room to focus"))
         .child(div().text_size(11).text_color(t.dim).text_center().child(view.query ? "Try fewer words or search all panels." : "Create a space here, or drag one onto the icon."))))))
