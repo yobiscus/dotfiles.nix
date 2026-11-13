@@ -9,5 +9,5 @@ fi
 
 SCRIPT_DIR=$(cd "$(dirname -- "${BASH_SOURCE[0]}")" &> /dev/null && pwd)
 flake_dir=$(readlink -f "${XDG_CONFIG_HOME:-$HOME/.config}/home-manager")
-nix flake update --flake "$flake_dir"
-exec "$SCRIPT_DIR/home-manager-switch" --flake "$flake_dir"
+nix flake update --flake "$flake_dir?submodules=1"
+exec "$SCRIPT_DIR/home-manager-switch" --flake "$flake_dir?submodules=1"

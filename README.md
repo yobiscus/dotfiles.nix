@@ -46,6 +46,12 @@ does not switch an existing Home Manager profile; after setup, use
 after the switch. Arguments are passed through to Home Manager; dry runs,
 help, and version output skip the diff.
 
+The default flake reference explicitly enables submodules so uncommitted
+changes inside `personal`, `work`, and `wm` are included. New files still need
+`git add` inside their submodule; they do not need a commit. An explicit
+`--flake` overrides the default reference; include `?submodules=1` when
+selecting another local checkout with submodules.
+
 `scripts/home-manager-diff-last` repeats the comparison from the last successful
 `hms` run, including an unchanged generation. Both store paths are saved in
 `${XDG_STATE_HOME:-$HOME/.local/state}/dotfiles/home-manager-last-switch`.

@@ -2,16 +2,33 @@
 
 set -eo pipefail
 
+has_config_arg=false
+for arg in "$@"; do
+  case "$arg" in
+    --flake|-f|--file) has_config_arg=true; break ;;
+  esac
+done
+
+switch_args=(--impure)
+config_flake="${XDG_CONFIG_HOME:-$HOME/.config}/home-manager/flake.nix"
+if [[ $has_config_arg == false && ! -v HOME_MANAGER_CONFIG && -f "$config_flake" ]]; then
+  flake_dir=$(dirname -- "$(readlink -f "$config_flake")")
+  # Enable submodules before Nix resolves self, so dirty submodules are included.
+  switch_args+=(--flake "$flake_dir?submodules=1")
+fi
+
+switch_args+=("$@")
+
 for arg in "$@"; do
   case "$arg" in
     -n|--dry-run|-h|--help|--version)
-      exec home-manager switch --impure "$@"
+      exec home-manager switch "${switch_args[@]}"
       ;;
   esac
 done
 
 before=$(home-manager generations 2>/dev/null | awk '/\(current\)$/ { print $7 }' || true)
-home-manager switch --impure "$@"
+home-manager switch "${switch_args[@]}"
 after=$(home-manager generations | awk '/\(current\)$/ { print $7 }' || true)
 
 state_dir="${XDG_STATE_HOME:-$HOME/.local/state}/dotfiles"
