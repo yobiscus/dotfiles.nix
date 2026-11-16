@@ -62,6 +62,11 @@ function gitTail(view, space) {
 
 function spaceRow(view, space, compact, displayed) {
   const data = view.renderData, t = theme(), info = view.info(space);
+  const total = info.list.length;
+  const breakdown = Object.entries(info.counts).filter(([, count]) => count)
+    .map(([state, count]) => `${LABEL[state]}: ${count}`).join(" · ");
+  const statusHint = total ? `${LABEL[info.status]} · ${info.counts[info.status]}/${total} agents\n${breakdown}\nIncludes subagents. Click to focus the agent; right-click for all agents`
+    : "No agents\nClick to select this space";
   const active = space.active && data.active === displayed;
   const selected = view.selected.has(space.id), place = location(space, view.live.panes);
   const ownerPanel = data.panels.find(p => p.id === owner(data, space.id));
@@ -81,14 +86,17 @@ function spaceRow(view, space, compact, displayed) {
     .on_mouse_down("right", (_e, cx) => { cx.stop_propagation(); view.context(space, cx); })
     .on_hover((on, cx) => { if (view.hovered === space.id || on) { view.hovered = on ? space.id : null; cx.notify(); } })
     .when(compact, el => el.justify_center())
-    .child(h_flex().id(`focus-status-${displayed}-${space.id}`).relative().size(18).flex_none().items_center().justify_center()
-      .cursor_pointer().tooltip(`${LABEL[info.status] ?? "No agent"}${info.counts.working > 1 ? ` · ${info.counts.working} working` : ""}\nClick to focus the agent; right-click for all agents`)
+    .child(h_flex().id(`focus-status-${displayed}-${space.id}`).h(18).gap(3).flex_none().items_center().justify_center()
+      .when(compact && total, el => el.flex_col().h(SPACE_ROW_HEIGHT).gap(0))
+      .cursor_pointer().tooltip(statusHint)
       .on_mouse_down("left", (_e, cx) => cx.stop_propagation())
       .on_mouse_up("left", (_e, cx) => cx.stop_propagation())
       .on_click((_e, cx) => { cx.stop_propagation(); view.jumpAttention(space); })
       .on_mouse_down("right", (_e, cx) => { cx.stop_propagation(); view.openAgents(space); })
       .child(status(info.status, 16))
-      .when(info.counts.blocked > 1, el => el.child(div().absolute().right(-5).bottom(-4).text_size(8).text_color(t.blocked).child(String(info.counts.blocked)))))
+      .when(total, el => el.child(div().id(`focus-status-count-${displayed}-${space.id}`).flex_none()
+        .font_family("DejaVu Sans Mono").text_size(compact ? 9 : 10.5).line_height("11px")
+        .text_color(info.status === "idle" ? t.dim : t[info.status] ?? t.muted).child(`${info.counts[info.status]}/${total}`))))
     .when(!compact, el => el.child(h_flex().flex_1().gap(5).items_center().min_w(0)
       .child(div().flex_1().min_w(0).truncate().font_medium().text_size(12.8).text_color(t.foreground).child(space.name))
       .when(data.active === "all" || view.query && view.searchAll, el => el.child(h_flex().flex_none().tooltip(ownerPanel?.name ?? "")

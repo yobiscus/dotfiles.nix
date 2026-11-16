@@ -1,8 +1,8 @@
 export const KEY = "focus.workspace.v1";
 export const ICONS = ["work", "star", "research", "blocked", "parked", "code", "folder", "coffee"];
 export const COLORS = ["ansi4", "ansi6", "ansi5", "ansi3", "ansi1", "muted"];
-export const RANK = { blocked: 4, done: 3, working: 2, idle: 1, unknown: 0 };
-export const LABEL = { blocked: "Needs input", done: "New result", working: "Working", idle: "Idle", unknown: "Unknown" };
+export const RANK = { blocked: 4, working: 3, done: 2, idle: 1, unknown: 0 };
+export const LABEL = { blocked: "Needs input", done: "New result", working: "Working", idle: "Idle", unknown: "Unknown", none: "No agents" };
 export const copy = value => JSON.parse(JSON.stringify(value));
 
 export function initial() {
@@ -103,11 +103,11 @@ export function summary(space, agents, terminals) {
   }
   const counts = { blocked: 0, done: 0, working: 0, idle: 0, unknown: 0 };
   for (const a of list) counts[a.status in counts ? a.status : "unknown"]++;
-  let status = space.status ?? (list.length ? "unknown" : "idle");
+  let status = list.length ? "unknown" : "none";
   for (const a of list) if ((RANK[a.status] ?? 0) > (RANK[status] ?? 0)) status = a.status;
   const since = Math.min(...(space.tabs ?? []).map(t => t.working_since).filter(Boolean));
   return { status, counts, list, since: Number.isFinite(since) ? since : null,
-    attention: counts.blocked + counts.done || Number(status === "blocked" || status === "done") };
+    attention: counts.blocked + (counts.working ? 0 : counts.done) };
 }
 
 export function parseGit(text) {

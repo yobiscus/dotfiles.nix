@@ -25,6 +25,7 @@ export function tool(id, glyph, hint, action) {
 }
 export function status(state, size = 16) {
   const t = theme();
+  if (state === "none") return stock("terminal", size).text_color(t.dim).tooltip(LABEL.none);
   if (state === "working") return stock("spinner", size).text_color(t.working).spin(1000);
   if (state === "idle") return h_flex().size(size).flex_none().items_center().justify_center().tooltip(LABEL.idle)
     .child(div().size(9).rounded(5).border_1().border_color(t.muted));

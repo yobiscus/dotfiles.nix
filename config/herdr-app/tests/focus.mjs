@@ -28,8 +28,8 @@ async function setup() {
     timer: { every() {}, after(ms, fn) { env.timers.push(fn); } }, spawn() {},
     write_to_clipboard(text) { env.clipboard = text; },
   };
-  function element() {
-    const node = { children: [], handlers: {}, id: null };
+  function element(asset = null) {
+    const node = { children: [], handlers: {}, id: null, asset };
     let builder;
     builder = new Proxy(node, { get(node, key) {
       if (key === "node") return node;
@@ -37,6 +37,7 @@ async function setup() {
       if (key === "child") return child => { node.children.push(child); return builder; };
       if (key === "children") return children => { node.children.push(...children); return builder; };
       if (key === "id") return id => { node.id = id; return builder; };
+      if (key === "tooltip") return text => { node.tooltip = text; return builder; };
       if (key.startsWith("on_")) return (...args) => { node.handlers[`${key}${args.length === 2 ? `:${args[0]}` : ""}`] = args.at(-1); return builder; };
       return () => builder;
     } });
@@ -140,6 +141,41 @@ test("space rows expose status and metadata with machine groups and no Agents se
   const { find } = await setup();
   for (const id of ["focus-panel-all", "focus-panel-work", "focus-space-all-a", "focus-machine-all-local", "focus-machine-all-remote-remote", "focus-status-all-a", "focus-details"]) assert.ok(find(id));
   assert.equal(find("agents"), null);
+});
+
+test("space counters follow attention, work, results, and idle before showing no agents", async () => {
+  const { env, view, cx, find, fire } = await setup();
+  const cases = [
+    [["done", "working", "blocked", "working", "idle"], "blocked", "1/5", 1],
+    [["done", "working", "working", "working", "idle"], "working", "3/5", 0],
+    [["done", "done", "idle", "idle", "idle"], "done", "2/5", 2],
+    [["idle", "idle", "idle", "idle", "idle"], "idle", "5/5", 0],
+    [["unrecognized"], "unknown", "1/1", 0],
+    [[], "none", null, 0],
+  ];
+  for (const [states, expected, count, attention] of cases) {
+    env.agents = states.map((status, i) => ({ space: "a", address: `t${i}`, pane: `p${i}`, status }));
+    view.render(cx);
+    const info = view.info(env.sp[0]);
+    assert.equal(info.status, expected, `Ignore the space's old blocked status for ${expected}`);
+    assert.equal(info.attention, attention);
+    assert.equal(find("focus-status-count-all-a")?.node.children[0] ?? null, count);
+    if (count) assert.ok(find("focus-status-all-a").node.tooltip.includes(count));
+    env.calls.length = 0;
+    fire("focus-status-all-a", "on_click");
+    const target = env.agents.find(a => a.status === expected) ?? env.agents[0];
+    assert.deepEqual(env.calls.filter(([name]) => name === "pane.focus"),
+      target ? [["pane.focus", { terminal: target.address }]] : []);
+  }
+  assert.equal(find("focus-status-all-a").node.children[0].node.asset, "mods/workspace-chrome/terminal.svg");
+
+  env.agents = [{ space: "a", address: "t0", status: "working" }, { space: "a", address: "t1", status: "done" }];
+  view.width = 44;
+  assert.equal(find("focus-status-count-all-a").node.children[0], "1/2");
+  const hint = find("focus-status-all-a").node.tooltip;
+  assert.ok(hint.includes("Working: 1")); assert.ok(hint.includes("New result: 1"));
+  fire("focus-status-all-a", "on_mouse_down:right");
+  assert.equal(env.overlays.at(-1).props.mode, "agents");
 });
 
 test("dragging multiple spaces to an icon changes membership, including cross-host selections", async () => {
@@ -430,9 +466,14 @@ test("panel switches retain selection and independent machine folds", async () =
 
 test("sub-agent input requests reach their space's summary without duplicating agents", async () => {
   const { model: m, env } = await setup();
-  env.terminals = [{ address: "child", parent: "remote/t1", state: "live", status: "error" }];
+  const child = { address: "child", parent: "remote/t1", state: "live", status: "error" };
+  env.terminals = [child, child,
+    { address: "nested", parent: "child", state: "live", status: "working" },
+    { address: "finished", parent: "remote/t1", state: "live", status: "done" },
+    { address: "exited", parent: "remote/t1", state: "exited", status: "working" }];
   const info = m.summary(env.sp[1], env.agents, env.terminals);
-  assert.equal(info.status, "blocked"); assert.equal(info.counts.blocked, 1); assert.equal(info.counts.working, 1);
+  assert.equal(info.status, "blocked"); assert.equal(info.counts.blocked, 1); assert.equal(info.counts.working, 2);
+  assert.equal(info.counts.idle, 1); assert.equal(info.list.length, 4);
 });
 
 test("notes save against the explicitly targeted space and cancel leaves them unchanged", async () => {
