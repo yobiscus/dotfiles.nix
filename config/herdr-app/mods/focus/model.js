@@ -92,7 +92,7 @@ export function creation(data, active) {
 }
 
 export function summary(space, agents, terminals) {
-  const list = agents.filter(a => a.space === space.id);
+  let list = agents.filter(a => a.space === space.id);
   const seen = new Set(list.map(a => a.address));
   for (let i = 0; i < list.length; i++) {
     for (const t of terminals) {
@@ -101,6 +101,8 @@ export function summary(space, agents, terminals) {
       list.push({ ...t, child: true, status: t.status === "error" ? "blocked" : t.status === "done" ? "idle" : t.status });
     }
   }
+  // Traverse helper terminals to find subagents, but only count agent reports.
+  list = list.filter(a => a.status != null);
   const counts = { blocked: 0, done: 0, working: 0, idle: 0, unknown: 0 };
   for (const a of list) counts[a.status in counts ? a.status : "unknown"]++;
   let status = list.length ? "unknown" : "none";

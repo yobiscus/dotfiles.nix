@@ -469,12 +469,16 @@ test("panel switches retain selection and independent machine folds", async () =
 });
 
 test("sub-agent input requests reach their space's summary without duplicating agents", async () => {
-  const { model: m, env } = await setup();
+  const { model: m, env, find } = await setup();
+  env.terminals = [{ address: "build", parent: "remote/t1", state: "live", status: null }];
+  assert.equal(m.summary(env.sp[1], env.agents, env.terminals).list.length, 1);
+  assert.equal(find("focus-status-count-all-remote/a"), null);
   const child = { address: "child", parent: "remote/t1", state: "live", status: "error" };
-  env.terminals = [child, child,
-    { address: "nested", parent: "child", state: "live", status: "working" },
+  env.terminals.push(child, child,
+    { address: "helper", parent: "remote/t1", state: "live" },
+    { address: "nested", parent: "helper", state: "live", status: "working" },
     { address: "finished", parent: "remote/t1", state: "live", status: "done" },
-    { address: "exited", parent: "remote/t1", state: "exited", status: "working" }];
+    { address: "exited", parent: "remote/t1", state: "exited", status: "working" });
   const info = m.summary(env.sp[1], env.agents, env.terminals);
   assert.equal(info.status, "blocked"); assert.equal(info.counts.blocked, 1); assert.equal(info.counts.working, 2);
   assert.equal(info.counts.idle, 1); assert.equal(info.list.length, 4);
