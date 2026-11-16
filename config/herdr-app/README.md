@@ -8,7 +8,8 @@ name, branch and Git drift. The details area below contains the freeform
 note preview/editor, path actions, branch, and Git change counts.
 
 Beside each status icon, `3/5` means three of five agents share the displayed
-state, including subagents. Needs input takes precedence over working, then
+state, including subagents. When all agents share that state, show only the
+count; a single agent shows just the icon. Needs input precedes working, then
 new results, then idle. New-result badges wait until no agents in that space
 are working. Hover over the status for the full state breakdown. Spaces
 without agents show a terminal icon and no counter; idle circles mean agents

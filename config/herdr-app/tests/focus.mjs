@@ -149,8 +149,10 @@ test("space counters follow attention, work, results, and idle before showing no
     [["done", "working", "blocked", "working", "idle"], "blocked", "1/5", 1],
     [["done", "working", "working", "working", "idle"], "working", "3/5", 0],
     [["done", "done", "idle", "idle", "idle"], "done", "2/5", 2],
-    [["idle", "idle", "idle", "idle", "idle"], "idle", "5/5", 0],
-    [["unrecognized"], "unknown", "1/1", 0],
+    [["idle", "idle", "idle", "idle", "idle"], "idle", "5", 0],
+    [["working", "working"], "working", "2", 0],
+    [["working"], "working", null, 0],
+    [["unrecognized"], "unknown", null, 0],
     [[], "none", null, 0],
   ];
   for (const [states, expected, count, attention] of cases) {
@@ -174,6 +176,8 @@ test("space counters follow attention, work, results, and idle before showing no
   assert.equal(find("focus-status-count-all-a").node.children[0], "1/2");
   const hint = find("focus-status-all-a").node.tooltip;
   assert.ok(hint.includes("Working: 1")); assert.ok(hint.includes("New result: 1"));
+  env.agents.pop();
+  assert.equal(find("focus-status-count-all-a"), null);
   fire("focus-status-all-a", "on_mouse_down:right");
   assert.equal(env.overlays.at(-1).props.mode, "agents");
 });
